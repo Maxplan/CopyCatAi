@@ -1,9 +1,11 @@
 // Purpose: Handles user CRUD operations and authentication.
 
+using System.Security.Claims;
 using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.DTOs;
 using CopyCatAiApi.Models;
 using CopyCatAiApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -54,7 +56,7 @@ namespace CopyCatAiApi.Controllers
                 Email = createUserDTO.Email,
                 UserName = createUserDTO.UserName
             };
-            
+
             // Create the user with the UserManager
             var result = await _userManager.CreateAsync(user, createUserDTO.Password!);
 
@@ -218,5 +220,39 @@ namespace CopyCatAiApi.Controllers
             // Return the token and user
             return Ok(new { token, userGetDTO });
         }
+
+        //[Authorize]
+        [HttpGet("getCurrentUser")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            // Hämta e-postadress från token
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized();
+            }
+
+            // Använd UserManager för att hitta användaren med den givna e-postadressen
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Skapa en ViewModel eller ett anonymt objekt för att skicka tillbaka användarinformation
+            var UserGetDTO = new
+            {
+                user.Id,
+                user.Email,
+                user.UserName
+            };
+
+            return Ok(UserGetDTO);
+        }
     }
+
 }

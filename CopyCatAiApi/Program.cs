@@ -14,19 +14,20 @@ builder.Services.AddDbContext<CopyCatAiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("sqlite")));
 
 // Add Identity
-builder.Services.AddIdentity<UserModel, IdentityRole>(options =>
+builder.Services.AddIdentityCore<UserModel>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
-}).AddEntityFrameworkStores<CopyCatAiContext>()
-.AddRoles<IdentityRole>()
-.AddDefaultTokenProviders();
+}).AddRoles<IdentityRole>()
+  .AddEntityFrameworkStores<CopyCatAiContext>()
+  .AddDefaultTokenProviders();
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddScoped<TokenServices>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -40,27 +41,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("tokenSettings:tokenKey").Value ?? ""))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                builder.Configuration["tokenSettings:tokenKey"]!))
         };
     });
 
+// Add authorization policies
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
     options.AddPolicy("User", policy => policy.RequireRole("User"));
 });
 
-// Add token services
-builder.Services.AddScoped<TokenServices>();
-// Add CORS
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
@@ -74,15 +72,15 @@ if (app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
 
 app.UseRouting();
 
 app.UseAuthentication();
-
-app.MapControllers();
+app.UseAuthorization();
 
 app.UseCors("AllowAll");
+
+app.MapControllers();
 
 app.Run();
