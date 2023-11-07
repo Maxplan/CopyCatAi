@@ -1,5 +1,6 @@
 // Purpose: Model for Request data.
 
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -7,6 +8,8 @@ namespace CopyCatAiApi.Models
 {
     public class RequestModel
     {
+        [Key]
+        public int RequestId { get; set; } // Primary key for the request table
         public string Request { get; set; } = ""; // The request from the user
         public UserModel User { get; set; } = new UserModel(); // The user who sent the request
         public DateTime TimeStamp { get; set; } = DateTime.Now; // The time the request was sent
