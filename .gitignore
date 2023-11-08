@@ -7,3 +7,5 @@
 .vs
 *.sln
 .db*
+.db-shm
+.db-wal

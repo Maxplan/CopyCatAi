@@ -1,5 +1,6 @@
 // Purpose: Handles user CRUD operations and authentication.
 
+using System.Reflection;
 using System.Security.Claims;
 using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.DTOs;
@@ -209,16 +210,25 @@ namespace CopyCatAiApi.Controllers
             // Create a token
             var token = await _tokenService.CreateToken(user);
 
-            // Create a DTO to return, hides data from UserModel
-            var userGetDTO = new UserGetDTO
+            var cookieOptions = new CookieOptions
             {
-                Id = user.Id,
-                Email = user.Email,
-                UserName = user.UserName
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddMinutes(30),
+                Secure = false,
+                SameSite = SameSiteMode.Lax
             };
 
-            // Return the token and user
-            return Ok(new { token, userGetDTO });
+            Response.Cookies.Append("jwt", token, cookieOptions);
+
+            return Ok(new { Message = "Login successful" });
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwt");
+
+            return Ok("Logout successful");
         }
 
         //[Authorize]
@@ -252,6 +262,17 @@ namespace CopyCatAiApi.Controllers
             };
 
             return Ok(UserGetDTO);
+        }
+
+        // Test Authentication
+        [HttpGet("test-auth")]
+        [Authorize]
+        public IActionResult TestAuth()
+        {
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var currentUserEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            return Ok(new { Message = "You are authorized", UserId = currentUserId, Email = currentUserEmail });
         }
     }
 

@@ -2,6 +2,7 @@
   "name": "copycatai-react",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5119",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -11,6 +12,7 @@
     "@types/react": "^18.2.36",
     "@types/react-dom": "^18.2.14",
     "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.18.0",
