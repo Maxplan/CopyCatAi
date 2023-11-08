@@ -1,12 +1,12 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Routes from "./Routes/Routes";
 
-function App() {
+const app: React.FC = () => {
   return (
-    <div className="App">
+    <div>
+      <Routes />
     </div>
   );
 }
 
-export default App;
+export default app;
