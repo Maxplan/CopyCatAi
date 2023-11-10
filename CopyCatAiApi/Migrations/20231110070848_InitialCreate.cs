@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CopyCatAiApi.Data.Migrations
+namespace CopyCatAiApi.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -138,15 +138,6 @@ namespace CopyCatAiApi.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-            
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "Name", "NormalizedName", "ConcurrencyStamp" },
-                values: new object[,]
-                {
-                    { Guid.NewGuid().ToString(), "user", "USER", Guid.NewGuid().ToString() },
-                    { Guid.NewGuid().ToString(), "admin", "ADMIN", Guid.NewGuid().ToString() }
-                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
@@ -244,6 +235,7 @@ namespace CopyCatAiApi.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Response = table.Column<string>(type: "TEXT", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserRating = table.Column<int>(type: "INTEGER", nullable: false),
                     ConversationId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

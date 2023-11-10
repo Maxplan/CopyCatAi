@@ -25,12 +25,16 @@ builder.Services.AddIdentityCore<UserModel>(options =>
   .AddEntityFrameworkStores<CopyCatAiContext>()
   .AddDefaultTokenProviders();
 
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<TokenServices>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add OpenAI service
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<OpenAIService>();
 // Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

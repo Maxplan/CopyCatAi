@@ -11,6 +11,8 @@ namespace CopyCatAiApi.Models
         public int ResponseId { get; set; } // Primary key for the response table
         public string Response { get; set; } = ""; // The response from the AI
         public DateTime TimeStamp { get; set; } = DateTime.Now; // The time the response was sent
+        public int UserRating { get; set; } = 1; // The vote of the user, 1 default, 0 dislike, 2 like
+
 
         //Navigation Properties
         [ForeignKey("ConversationId")]
