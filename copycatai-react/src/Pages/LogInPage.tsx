@@ -12,8 +12,8 @@ const LoginPage = () => {
       // Call API to log in
       await axios.post('http://localhost:5119/api/v1/User/login', credentials, { withCredentials: true });
     
-      // Redirect the user to the interaction page
-      navigate('/interaction');
+      // Redirect the user to the landing page
+      navigate('/');
     } catch (error) {
       // Handle Error Here
       console.error(error);

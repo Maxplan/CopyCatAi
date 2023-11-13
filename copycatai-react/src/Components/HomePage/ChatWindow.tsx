@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MessageList from './MessageList';
 import InputBar from './InputBar';
+import '../../Styles/chatWindow.css';
 
 // Define the structure of a message
 interface Message {
@@ -62,7 +63,7 @@ const ChatWindow: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className='main-container'>
             <MessageList messages={messages} />
             <InputBar onSendMessage={handleSendMessage} />
         </div>

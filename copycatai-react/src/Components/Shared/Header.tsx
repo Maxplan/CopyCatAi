@@ -1,20 +1,12 @@
-//header including a logout button only
-
+// Header including app name, logo, logged in user name
 import React from "react";
-import axios from "axios";
+import "../../Styles/header.css";
 
 const Header = () => {
   return (
-    <div>
-      <button type="submit" onClick={
-        async () => {
-          try {
-            await axios.post('http://localhost:5119/api/v1/User/logout', {}, { withCredentials: true });
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      }>Logout</button>
+    <div className="header">
+      <h1 className="logo"><a href="/">CopyCat AI</a></h1>
+      <h2 className="user"><span>Username</span></h2>
     </div>
   );
 };
