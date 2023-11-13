@@ -1,6 +1,7 @@
 using System.Text;
 using CopyCatAiApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using static CopyCatAiApi.Services.OpenAIService;
 
 namespace CopyCatAiApi.Controllers
 {
@@ -16,9 +17,9 @@ namespace CopyCatAiApi.Controllers
         }
 
         [HttpPost("Sendmessage")]
-        public async Task<IActionResult> SendMessage([FromBody] string message)
+        public async Task<IActionResult> SendMessage([FromBody] List<ChatMessage> conversation)
         {
-            var response = await _openAIService.SendMessageToOpenAI(message);
+            var response = await _openAIService.SendMessageToOpenAI(conversation);
             return Ok(response);
         }
     }
