@@ -9,7 +9,7 @@ const RegisterPage = () => {
   const registerUser = async (credentials: { email: string; password: string; username?: string }) => {
     try {
       await axios.post('http://localhost:5119/api/v1/User/register', credentials, { withCredentials: true });
-      navigate('/interaction');
+      navigate('/login');
     } catch (error) {
       console.error(error);
     }

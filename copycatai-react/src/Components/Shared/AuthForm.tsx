@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // This is the correct import for redirecting
 
 type AuthFormProps = {
     action: "login" | "register";
@@ -7,7 +6,7 @@ type AuthFormProps = {
 }
 
 const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
-  const navigate = useNavigate();
+
   const isLogin = action === "login";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +22,6 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
 
     onFormSubmit(credentials)
       .then(() => {
-        // Redirect to the interaction page on successful form submission
-        navigate("/interaction");
       })
       .catch((error) => {
         // Set error message if the API call fails

@@ -7,5 +7,7 @@
 .vs
 *.sln
 .db*
-.db-shm
-.db-wal
+*.db-shm
+*.db-wal
+CopyCatAiApi/CopyCatAi.db-wal
+CopyCatAiApi/CopyCatAi.db-shm

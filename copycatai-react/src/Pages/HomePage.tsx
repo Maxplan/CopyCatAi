@@ -1,16 +1,10 @@
 import React from "react";
-import WelcomeBanner from "../Components/HomePage/WelcomeBanner";
-import HomePageActions from "../Components/HomePage/HomePageActions";
+import ChatWindow from "../Components/HomePage/ChatWindow";
 
-const HomePage = () => {
+const InteractionPage: React.FC = () => {
   return (
-    <div>
-      <h1>Home Page</h1>
-      <p>This is the home page.</p>
-      <WelcomeBanner />
-      <HomePageActions />
-    </div>
+      <ChatWindow />
   );
 };
 
-export default HomePage;
+export default InteractionPage;
