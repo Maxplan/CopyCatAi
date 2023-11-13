@@ -1,15 +1,12 @@
 import React from "react";
 import ChatWindow from "../Components/InteractionPage/ChatWindow";
 
-const InteractionPage = () => {
+const InteractionPage: React.FC = () => {
   return (
-    <><div>
-      <h1>Interaction Page</h1>
-      <p>This is the interaction page.</p>
-    </div>
+    <div>
+      <h1>Chat Interface</h1>
       <ChatWindow />
-    </>
-    //button for logout, testing purporse
+    </div>
   );
 };
 
