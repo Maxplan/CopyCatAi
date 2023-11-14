@@ -1,7 +1,7 @@
 import React from 'react';
 import AuthForm from '../Components/Shared/AuthForm';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Ensure axios is installed and imported
+import axios from 'axios'; // To Call API
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -10,13 +10,16 @@ const LoginPage = () => {
     try {
 
       // Call API to log in
-      await axios.post('http://localhost:5119/api/v1/User/login', credentials, { withCredentials: true });
-    
+      const response = await axios.post('http://localhost:5119/api/v1/User/login', credentials, { withCredentials: true });
+      
+      // Store token in local storage
+      localStorage.setItem("token", response.data.token);
       // Redirect the user to the landing page
       navigate('/');
     } catch (error) {
-      // Handle Error Here
+      // Error handling
       console.error(error);
+      throw error;
     }
   };
   

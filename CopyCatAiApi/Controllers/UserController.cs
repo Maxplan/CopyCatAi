@@ -6,6 +6,7 @@ using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.DTOs;
 using CopyCatAiApi.Models;
 using CopyCatAiApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -210,24 +211,12 @@ namespace CopyCatAiApi.Controllers
             // Create a token
             var token = await _tokenService.CreateToken(user);
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddMinutes(30),
-                Secure = false,
-                SameSite = SameSiteMode.Lax
-            };
-
-            Response.Cookies.Append("jwt", token, cookieOptions);
-
-            return Ok(new { Message = "Login successful" });
+            return Ok(new { Token = token, Message = "Login successful" });
         }
 
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            Response.Cookies.Delete("jwt");
-
             return Ok("Logout successful");
         }
 
@@ -264,16 +253,13 @@ namespace CopyCatAiApi.Controllers
             return Ok(UserGetDTO);
         }
 
-        // Test Authentication
-        [HttpGet("test-auth")]
         [Authorize]
-        public IActionResult TestAuth()
+        [HttpGet("isAuthenticated")]
+        public IActionResult IsAuthenticated()
         {
-            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var currentUserEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-
-            return Ok(new { Message = "You are authorized", UserId = currentUserId, Email = currentUserEmail });
+            return Ok(new { Message = "Authenticated" });
         }
+
     }
 
 }
