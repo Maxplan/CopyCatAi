@@ -1,4 +1,5 @@
 using System.Text;
+using CopyCatAiApi.Data;
 using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.Models;
 using CopyCatAiApi.Services;
@@ -70,6 +71,17 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Seed the database
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+var context = services.GetRequiredService<CopyCatAiContext>();
+var userManager = services.GetRequiredService<UserManager<UserModel>>();
+var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+await context.Database.MigrateAsync();
+await SeedData.LoadRoles(roleManager);
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,0 +1,51 @@
+.inputBar {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    padding: .5em 1em;
+    border: 1px solid #5a5a5a;
+    border-radius: 1em;
+    align-items: center;
+    overflow-y: auto;
+}
+
+.inputBar textarea{
+    width: 100%;
+    min-height: 1.5em;
+    max-height: 10em;
+    border: none;
+    align-items: center;
+    font-size: 1em;
+    resize: none;
+}
+
+.inputBar textarea:focus{
+    outline: none;
+}
+
+.inputBar button{
+    width: 4em;
+    height: 4em;
+    border: none;
+    border-radius: 1em;
+    margin: 0 0 0 1em;
+    transition: all 0.15s ease-in-out;
+}
+
+.inputBar button:hover{
+    cursor: pointer;
+    background-color: #33FF86;
+}
+
+textarea::-webkit-scrollbar {
+    width: 12px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background-color: #c9c9c9;
+    border-radius: 6px;
+}

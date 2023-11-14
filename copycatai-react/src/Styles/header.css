@@ -4,15 +4,15 @@
     justify-content: space-between;
     width: 100vw;
     padding: 0.5rem 1rem;
-    background-color: var(--light-primary);
+    background-color: #c9c9c9;
 }
 
 .header h1, h2{
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--light-secondary);
+    color: #000;
 }
 a{
     text-decoration: none;
-    color: var(--light-secondary);
+    color: #000;
 }

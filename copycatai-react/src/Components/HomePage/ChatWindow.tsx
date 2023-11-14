@@ -64,8 +64,10 @@ const ChatWindow: React.FC = () => {
 
     return (
         <div className='main-container'>
-            <MessageList messages={messages} />
-            <InputBar onSendMessage={handleSendMessage} />
+            <div className="chat-container">
+                <MessageList messages={messages} />
+                <InputBar onSendMessage={handleSendMessage} />
+            </div>
         </div>
   );
 };

@@ -56,7 +56,9 @@ namespace CopyCatAiApi.Controllers
             var user = new UserModel
             {
                 Email = createUserDTO.Email,
-                UserName = createUserDTO.UserName
+                UserName = createUserDTO.UserName,
+                LastName = createUserDTO.LastName!,
+                FirstName = createUserDTO.FirstName!
             };
 
             // Create the user with the UserManager

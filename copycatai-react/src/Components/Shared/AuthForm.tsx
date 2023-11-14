@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../../Styles/authForm.css";
 
 type AuthFormProps = {
     action: "login" | "register";
@@ -11,6 +12,8 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,7 +21,9 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
     setError("");
 
     // If logging in, use email and password; if registering, include username
-    const credentials = isLogin ? { email, password } : { email, password, username };
+    const credentials = isLogin
+      ? { email, password }
+      : { email, password, username, firstName, lastName };
 
     onFormSubmit(credentials)
       .then(() => {
@@ -41,16 +46,36 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
         />
       </label>
 
-      {isLogin || (
-        <label>
-          Username:
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </label>
+      {!isLogin && (
+        <>
+          <label>
+            Username:
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            First Name:
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Last Name:
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </label>
+        </>
       )}
 
       <label>
@@ -69,5 +94,4 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
     </form>
   );
 };
-
 export default AuthForm;
