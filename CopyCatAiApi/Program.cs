@@ -36,6 +36,7 @@ builder.Services.AddSwaggerGen();
 // Add OpenAI service
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<OpenAIService>();
+builder.Services.AddScoped<ConversationService>();
 // Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

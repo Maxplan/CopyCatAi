@@ -10,13 +10,13 @@ namespace CopyCatAiApi.Models
         [Key]
         public int ResponseId { get; set; } // Primary key for the response table
         public string Response { get; set; } = ""; // The response from the AI
-        public DateTime TimeStamp { get; set; } = DateTime.Now; // The time the response was sent
-        public int UserRating { get; set; } = 1; // The vote of the user, 1 default, 0 dislike, 2 like
+        public DateTime TimeStamp { get; set; } // The time the response was sent
+        public bool? UserRating { get; set; } // The vote of the user, 1 default, 0 dislike, 2 like
 
 
         //Navigation Properties
         [ForeignKey("ConversationId")]
         public int ConversationId { get; set; } // Foreign key for the conversation table
-        public ConversationModel Conversation { get; set; } = new ConversationModel(); // Navigation property for the conversation table
+        public ConversationModel? Conversation { get; set; } // Navigation property for the conversation table
     }
 }

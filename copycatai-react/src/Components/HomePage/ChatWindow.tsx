@@ -12,6 +12,8 @@ interface Message {
 const ChatWindow: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
 
+    const authToken = localStorage.getItem('token')
+
     const sendMessageToApi = async (conversation: Message[]) => {
         try {
 
@@ -24,7 +26,8 @@ const ChatWindow: React.FC = () => {
             const response = await fetch('http://localhost:5119/api/v1/Interaction/Sendmessage', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 },
                 body: JSON.stringify( formattedConversation )
             });
@@ -43,16 +46,22 @@ const ChatWindow: React.FC = () => {
     const handleSendMessage = async (messageText: string) => {
         const newUserMessage: Message = { type: 'user', text: messageText };
         const loadingMessage: Message = { type: 'assistant', text: '...' };
-
+        
         setMessages(currentMessages => [...currentMessages, newUserMessage, loadingMessage]);
-
+        
         try {
             const fullConversation = messages.concat(newUserMessage);
             const apiResponse = await sendMessageToApi(fullConversation);
-
+        
+            // Parse the JSON response
+            const parsedResponse = JSON.parse(apiResponse);
+        
+            // Extract the 'response' field from the parsed response
+            const textResponse = parsedResponse.response;
+        
             setMessages(currentMessages => {
                 const messagesWithoutLoading = currentMessages.slice(0, -1);
-                return [...messagesWithoutLoading, { type: 'assistant', text: apiResponse || "Error in sending message" }];
+                return [...messagesWithoutLoading, { type: 'assistant', text: textResponse || "Error in sending message" }];
             })
         } catch (error) {
             setMessages(currentMessages => {

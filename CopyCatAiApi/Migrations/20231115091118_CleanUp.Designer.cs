@@ -3,6 +3,7 @@ using System;
 using CopyCatAiApi.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CopyCatAiApi.Migrations
 {
     [DbContext(typeof(CopyCatAiContext))]
-    partial class CopyCatAiContextModelSnapshot : ModelSnapshot
+    [Migration("20231115091118_CleanUp")]
+    partial class CleanUp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.13");
@@ -24,9 +27,6 @@ namespace CopyCatAiApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PreferenceProfile")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")

@@ -13,8 +13,8 @@ namespace CopyCatAiApi.Models
         public int ConversationId { get; set; } // Primary key for the conversation table
         public IEnumerable<RequestModel> RequestList { get; set; } = new List<RequestModel>(); // List of requests in the conversation
         public IEnumerable<ResponseModel> ResponseList { get; set; } = new List<ResponseModel>(); // List of responses in the conversation
-        public DateTime timestamp => RequestList.First().TimeStamp; // The time the conversation started    
-        public string PreferenceProfile => RequestList.First().PreferenceProfile; // The preference profile of the user    
+        public DateTime Timestamp { get; set; } // The time the conversation started    
+        public string? PreferenceProfile { get; set; } // The preference profile of the user    
 
         // Navigation Properties
         [ForeignKey("UserId")]

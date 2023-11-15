@@ -25,5 +25,11 @@ namespace CopyCatAiApi.Services
             await _context.Responses.AddAsync(response);
             await _context.SaveChangesAsync();
         }
+
+        public async Task SaveConversationToDatabase(ConversationModel conversation)
+        {
+            await _context.Conversations.AddAsync(conversation);
+            await _context.SaveChangesAsync();
+        }
     }
 }
