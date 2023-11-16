@@ -1,0 +1,46 @@
+.sidebar{
+    display:flex;
+    flex-direction: column;
+    border-radius: 1em;
+    box-shadow: 0 0 1em var(--box-shadow-color);
+    padding: 1em;
+    margin: 1em 1em 0 1em;
+    height: 79vh;
+    min-width: 20%;
+    overflow-y: auto;
+    background-color: var(--dark-primary);
+}
+.sidebar h3{
+    margin: 0 0.5em 0.25em 0.5em;
+    align-self: center;
+    color: var(--highlighter-color);
+    font-size: 2em;
+}
+.sidebar li{
+    list-style: none;
+    box-shadow: 0 0 .25em var(--box-shadow-color);
+    margin: 0.5em;
+    padding: 0.5em;
+    border-radius: 0.25em;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    color: var(--dark-text);
+}
+.sidebar li:hover{
+    background-color: #9c9c9c;
+    cursor: pointer;
+    color: var(--dark-primary);
+}
+.sidebar::-webkit-scrollbar {
+    width: 12px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: var(--dark-primary);
+    margin: 1em;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--dark-secondary);
+    border-radius: 6px;
+}

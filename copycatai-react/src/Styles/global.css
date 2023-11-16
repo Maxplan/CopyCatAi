@@ -4,9 +4,11 @@
     --light-primary: #c6ccb2;
     --light-secondary: #093824;
     --light-text: #485544;
-    --dark-primary: #212121;
-    --dark-secondary: #424242;
-    --dark-text: #FFFFFF;
+    --dark-primary: #4e4e4e;
+    --dark-secondary: #3b3b3b;
+    --dark-text: #bebebe;
+    --box-shadow-color: #181818;
+    --highlighter-color: #218aff;
 }
 
 
@@ -22,5 +24,5 @@
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    background-color: #fff;
+    background-color: var(--dark-secondary);
 }

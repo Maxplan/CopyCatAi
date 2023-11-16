@@ -114,5 +114,19 @@ namespace CopyCatAiApi.Controllers
             return Ok();
         }
 
+        [HttpGet("GetConversationByUserId")]
+        public async Task<IActionResult> GetConversationByUserId()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var conversations = await _conversationService.GetConversationsByUserId(userId);
+
+            return Ok(conversations);
+        }
     }
 }

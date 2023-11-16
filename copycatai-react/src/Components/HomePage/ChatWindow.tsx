@@ -33,7 +33,7 @@ const ChatWindow: React.FC = () => {
         };
         fetchConversationId();
         return () => { isMounted = false };
-    }, []);
+    }, [authToken]);
 
     const sendMessageToApi = async (conversation: Message[]) => {
         try {
@@ -100,12 +100,10 @@ const ChatWindow: React.FC = () => {
     };
 
     return (
-        <div className='main-container'>
             <div className="chat-container">
                 <MessageList messages={messages} />
                 <InputBar onSendMessage={handleSendMessage} />
             </div>
-        </div>
   );
 };
 

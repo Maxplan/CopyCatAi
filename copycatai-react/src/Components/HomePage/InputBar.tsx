@@ -28,10 +28,14 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage }) => {
 
     
     const handleSend = () => { 
-        onSendMessage(input);
-        setInput("");
-        if (textAreaRef.current) {
-            textAreaRef.current.style.height = '1.5em'; // Reset height to default after sending message
+        const trimmedInput = input.trim();
+
+        if (trimmedInput) {
+            onSendMessage(input);
+            setInput("");
+            if (textAreaRef.current) {
+                textAreaRef.current.style.height = '1.5em'; // Reset height to default after sending message
+            }  
         }
     };
     

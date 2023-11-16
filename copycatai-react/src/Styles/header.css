@@ -4,15 +4,23 @@
     justify-content: space-between;
     width: 100vw;
     padding: 0.5rem 1rem;
-    background-color: #c9c9c9;
+    box-shadow: 0 0 1em var(--box-shadow-color);
+    background: linear-gradient(135deg, var(--dark-primary), var(--dark-secondary));
 }
 
 .header h1, h2{
     font-size: 1.5rem;
     font-weight: 600;
-    color: #000;
+    color: var(--highlighter-color);
 }
 a{
     text-decoration: none;
-    color: #000;
+    color: var(--highlighter-color);
+}
+
+@media screen and (max-width: 768px) {
+    .header{
+        justify-content: center;
+    }
+    
 }
