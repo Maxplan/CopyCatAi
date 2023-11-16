@@ -23,7 +23,7 @@ namespace CopyCatAiApi.Controllers
         }
 
         [HttpPost("Sendmessage")]
-        public async Task<IActionResult> SendMessage([FromBody] List<ChatMessage> conversation, int? conversationId = null)
+        public async Task<IActionResult> SendMessage([FromBody] SendMessageRequestModel request)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -32,7 +32,7 @@ namespace CopyCatAiApi.Controllers
                 return Unauthorized();
             }
 
-            if (!conversationId.HasValue)
+            if (!request.ConversationId.HasValue)
             {
                 var newConversation = new ConversationModel()
                 {
@@ -41,30 +41,78 @@ namespace CopyCatAiApi.Controllers
                 };
 
                 await _conversationService.SaveConversationToDatabase(newConversation);
-                conversationId = newConversation.ConversationId;
+                request.ConversationId = newConversation.ConversationId;
             }
 
-            var request = new RequestModel()
+            var lastRequest = request.Conversation!.Last().Content!;
+
+            var requestModel = new RequestModel()
             {
-                Request = conversation.Last().Content!,
-                ConversationId = conversationId.Value,
+                Request = lastRequest,
+                ConversationId = request.ConversationId.Value,
                 TimeStamp = DateTime.Now
             };
 
-            var responseContent = await _openAIService.SendMessageToOpenAI(conversation);
+            var responseContent = await _openAIService.SendMessageToOpenAI(request.Conversation!);
 
-            var response = new ResponseModel()
+            var responseModel = new ResponseModel()
             {
                 Response = responseContent,
-                ConversationId = conversationId.Value,
+                ConversationId = request.ConversationId.Value,
                 TimeStamp = DateTime.Now
             };
 
-            await _conversationService.SaveRequestToDatabase(request);
+            await _conversationService.SaveRequestToDatabase(requestModel);
+            await _conversationService.SaveResponseToDatabase(responseModel);
+
+            return Ok(new { Response = responseContent, conversationId = request.ConversationId });
+        }
+
+
+        [HttpPost("StartConversation")]
+        public async Task<IActionResult> StartConversation()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var newConversation = new ConversationModel()
+            {
+                UserId = userId,
+                Timestamp = DateTime.Now
+            };
+
+            await _conversationService.SaveConversationToDatabase(newConversation);
+
+            return Ok(new { conversationId = newConversation.ConversationId });
+        }
+
+        [HttpPost("RateResponse")]
+        public async Task<IActionResult> RateResponse(int responseId, bool rating)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var response = await _conversationService.GetResponseById(responseId);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            response.UserRating = rating;
+
             await _conversationService.SaveResponseToDatabase(response);
 
-
-            return Ok(new { Response = responseContent, conversationId });
+            return Ok();
         }
+
     }
 }

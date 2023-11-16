@@ -1,7 +1,6 @@
-// Purpose: To provide a service for saving conversations to the database.
+// Purpose: To provide a service for handling conversation data.
 using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace CopyCatAiApi.Services
@@ -14,6 +13,8 @@ namespace CopyCatAiApi.Services
         {
             _context = context;
         }
+
+        //Save Methods
         public async Task SaveRequestToDatabase(RequestModel request)
         {
             await _context.Requests.AddAsync(request);
@@ -30,6 +31,84 @@ namespace CopyCatAiApi.Services
         {
             await _context.Conversations.AddAsync(conversation);
             await _context.SaveChangesAsync();
+        }
+
+        //Get Methods
+        public async Task<List<ConversationModel>> GetConversationsByUserId(string userId)
+        {
+            var result = await _context.Conversations
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.Timestamp)
+                .ToListAsync() ?? throw new Exception("No conversations found for this user.");
+
+            return result;
+        }
+
+        public async Task<List<RequestModel>> GetRequestsByConversationId(int conversationId)
+        {
+            var result = await _context.Requests
+                .Where(r => r.ConversationId == conversationId)
+                .OrderBy(r => r.TimeStamp)
+                .ToListAsync() ?? throw new Exception("No requests found for this conversation.");
+
+            return result;
+        }
+
+        public async Task<List<ResponseModel>> GetResponsesByConversationId(int conversationId)
+        {
+            var result = await _context.Responses
+                .Where(r => r.ConversationId == conversationId)
+                .OrderBy(r => r.TimeStamp)
+                .ToListAsync() ?? throw new Exception("No responses found for this conversation.");
+
+            return result;
+        }
+
+        public async Task<List<RequestModel>> GetRequestsByUserId(string userId)
+        {
+            var result = await _context.Requests
+                .Where(r => r.Conversation!.UserId == userId)
+                .OrderBy(r => r.TimeStamp)
+                .ToListAsync() ?? throw new Exception("No requests found for this user.");
+
+            return result;
+        }
+
+        public async Task<List<ResponseModel>> GetResponsesByUserId(string userId)
+        {
+            var result = await _context.Responses
+                .Where(r => r.Conversation!.UserId == userId)
+                .OrderBy(r => r.TimeStamp)
+                .ToListAsync() ?? throw new Exception("No responses found for this user.");
+
+            return result;
+        }
+
+        public async Task<RequestModel> GetRequestById(int requestId)
+        {
+            var result = await _context.Requests
+                .Where(r => r.RequestId == requestId)
+                .FirstOrDefaultAsync() ?? throw new Exception("No request found with this id.");
+
+            return result;
+        }
+
+        public async Task<ResponseModel> GetResponseById(int responseId)
+        {
+            var result = await _context.Responses
+                .Where(r => r.ResponseId == responseId)
+                .FirstOrDefaultAsync() ?? throw new Exception("No response found with this id.");
+
+            return result;
+        }
+
+        public async Task<ConversationModel> GetConversationById(int conversationId)
+        {
+            var result = await _context.Conversations
+                .Where(c => c.ConversationId == conversationId)
+                .FirstOrDefaultAsync() ?? throw new Exception("No conversation found with this id.");
+
+            return result;
         }
     }
 }
