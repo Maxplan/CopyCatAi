@@ -1,11 +1,11 @@
 .sidebar{
     display:flex;
     flex-direction: column;
-    border-radius: 1em;
+    border-radius: var(--border-radius-medium);
     box-shadow: 0 0 1em var(--box-shadow-color);
     padding: 1em;
     margin: 1em 1em 0 1em;
-    height: 79vh;
+    height: 80vh;
     min-width: 20%;
     overflow-y: auto;
     background-color: var(--dark-primary);
@@ -16,12 +16,17 @@
     color: var(--highlighter-color);
     font-size: 2em;
 }
+.sidebar ul {
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
 .sidebar li{
     list-style: none;
     box-shadow: 0 0 .25em var(--box-shadow-color);
-    margin: 0.5em;
     padding: 0.5em;
-    border-radius: 0.25em;
+    border-radius: var(--border-radius-small);
     transition: all 0.2s ease-in-out;
     text-align: center;
     color: var(--dark-text);
@@ -42,5 +47,5 @@
 
 .sidebar::-webkit-scrollbar-thumb {
     background-color: var(--dark-secondary);
-    border-radius: 6px;
+    border-radius: var(--border-radius-medium);
 }

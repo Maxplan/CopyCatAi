@@ -9,6 +9,9 @@
     --dark-text: #bebebe;
     --box-shadow-color: #181818;
     --highlighter-color: #218aff;
+    --border-radius-large: 1.5em;
+    --border-radius-medium: 1em;
+    --border-radius-small: 0.5em;
 }
 
 

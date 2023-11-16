@@ -5,30 +5,32 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    margin-right: 1em;
-    height: 100%;
+    margin: 1em 1em 0 0 ;
+    height: 80vh;
 }
 .messageList{
-    margin: 1em;
-    padding: 1em;
+
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 70vh;
+    min-height: 60vh;
+    height: 100%;
+    margin-bottom: 1em;
     background-color: var(--dark-primary);
-    border-radius: 1em;
+    border-radius: var(--border-radius-medium);
     box-shadow: 0 0 1em var(--box-shadow-color);
-    overflow-y: auto;
+    top: auto;
 }
 
 .messageList p{
     min-height: 2em;
     padding: 0.5em;
-    border-radius: .5em;
+    border-radius: var(--border-radius-medium);
     margin:1em;
     width: fit-content;
     max-width: 80%;
     box-shadow: 0 0 .5em var(--box-shadow-color);
+    word-wrap: break-word;
 }
 .user-message{
     background-color: var(--highlighter-color);

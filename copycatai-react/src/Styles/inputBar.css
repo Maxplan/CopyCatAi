@@ -1,21 +1,22 @@
 .inputBar {
     width: 100%;
     height: fit-content;
-    min-height: 6vh;
+    min-height: 8vh;
+    max-height: fit-content;
     display: flex;
     padding: .5em 1em;
     box-shadow: 0 0 1em var(--box-shadow-color);
-    border-radius: 1em;
+    border-radius: var(--border-radius-medium);
     align-items: center;
-    overflow-y: auto;
     align-self: flex-end;
     background-color: var(--dark-primary);
 }
 
 .inputBar textarea{
+    overflow-y: auto;
     width: 100%;
     min-height: 1.5em;
-    max-height: 10em;
+    max-height: 6em;
     border: none;
     align-items: center;
     font-size: 1em;
@@ -32,7 +33,7 @@
     width: 4em;
     height: 4em;
     border: none;
-    border-radius: 1em;
+    border-radius: var(--border-radius-medium);
     margin: 0 0 0 1em;
     transition: all 0.15s ease-in-out;
     box-shadow: 0 0 .5em var(--box-shadow-color);
@@ -54,5 +55,5 @@ textarea::-webkit-scrollbar-track {
 
 textarea::-webkit-scrollbar-thumb {
     background-color: var(--dark-secondary);
-    border-radius: 6px;
+    border-radius: var(--border-radius-medium);
 }

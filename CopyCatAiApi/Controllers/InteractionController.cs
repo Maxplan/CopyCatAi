@@ -115,7 +115,7 @@ namespace CopyCatAiApi.Controllers
         }
 
         [HttpGet("GetConversationByUserId")]
-        public async Task<IActionResult> GetConversationByUserId()
+        public async Task<IActionResult> GetConversationByUserId(int limit = 14)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -124,7 +124,7 @@ namespace CopyCatAiApi.Controllers
                 return Unauthorized();
             }
 
-            var conversations = await _conversationService.GetConversationsByUserId(userId);
+            var conversations = await _conversationService.GetConversationsByUserId(userId, limit);
 
             return Ok(conversations);
         }

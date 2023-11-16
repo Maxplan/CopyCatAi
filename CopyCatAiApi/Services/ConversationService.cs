@@ -34,11 +34,12 @@ namespace CopyCatAiApi.Services
         }
 
         //Get Methods
-        public async Task<List<ConversationModel>> GetConversationsByUserId(string userId)
+        public async Task<List<ConversationModel>> GetConversationsByUserId(string userId, int limit)
         {
             var result = await _context.Conversations
                 .Where(c => c.UserId == userId)
                 .OrderByDescending(c => c.Timestamp)
+                .Take(limit)
                 .ToListAsync() ?? throw new Exception("No conversations found for this user.");
 
             return result;
