@@ -3,7 +3,6 @@
     flex-direction: column;
     border-radius: var(--border-radius-medium);
     box-shadow: 0 0 1em var(--box-shadow-color);
-    padding: 1em 0.25em;
     margin: 1em 1em 0 1em;
     height: 90vh;
     min-width: 14em;
@@ -12,10 +11,14 @@
     background-color: var(--dark-primary);
 }
 .sidebar h3{
-    margin: 0 0.5em 0.25em 0.5em;
+    padding: 0.25em 0;
     align-self: center;
-    color: var(--highlighter-color);
-    font-size: 2em;
+    color: var(--dark-text);
+    font-size: 1.5em;
+    width: 100%;   
+    box-shadow: 0 0 1em var(--box-shadow-color);
+    text-align: center;
+    
 }
 .sidebar ul {
     display:flex;
@@ -44,7 +47,7 @@
 
 .sidebar::-webkit-scrollbar-track {
     background: var(--dark-primary);
-    margin: 1em;
+    margin: 3em 0 1em 0;
 }
 
 .sidebar::-webkit-scrollbar-thumb {

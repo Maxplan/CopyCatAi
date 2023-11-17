@@ -4,16 +4,17 @@ form {
     /* Adjust as needed */
     margin: 20px auto;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: var(--border-radius-medium);
-    box-shadow: 0 2px 4px var(--box-shadow-color);
-    background-color: #fff;
+    box-shadow: 0 0 1em var(--box-shadow-color);
+    background-color: var(--dark-primary);
 }
 
 /* Style for form labels and inputs */
 form label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 0.5em;
+    color: var(--dark-text)
 }
 
 form input[type="email"],
@@ -22,9 +23,15 @@ form input[type="password"] {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: var(--border-radius-small);
     box-sizing: border-box;
+}
+form input[type="email"]:focus,
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+    box-shadow: 0 0 1em var(--box-shadow-color);
+    outline: none;
 }
 
 /* Style for the form button */
@@ -33,15 +40,27 @@ form button {
     padding: 10px;
     border: none;
     border-radius: var(--border-radius-medium);
-    background-color: #007bff;
-    color: white;
+    background-color: var(--highlighter-color);
+    color: var(--dark-secondary);
     cursor: pointer;
     font-size: 16px;
-    margin-top: 20px;
+    margin-top: 1em;
+    transition: all 0.15s ease-in-out;
 }
 
 form button:hover {
-    background-color: #0056b3;
+    background-color: var(--dark-text);
+    color: var(--dark-secondary);
+}
+
+.reg-btn, .reg-btn a{
+    background-color: var(--dark-secondary);
+    color: var(--dark-text);
+}
+
+.reg-btn:hover, .reg-btn a:hover{
+    background-color: var(--dark-text);
+    color: var(--dark-secondary);
 }
 
 /* Style for error messages */

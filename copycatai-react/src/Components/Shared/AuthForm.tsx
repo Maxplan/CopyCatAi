@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../Styles/authForm.css";
 
 type AuthFormProps = {
@@ -6,8 +7,8 @@ type AuthFormProps = {
     onFormSubmit: (credentials: { email: string; password: string; username?: string }) => Promise<void>;
 }
 
-const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
 
+const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
   const isLogin = action === "login";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +16,12 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  const navigatetoRegister = () => {
+    navigate('/register');
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,6 +96,10 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
       </label>
 
       <button type="submit">{isLogin ? 'Login' : 'Register'}</button>
+
+      {isLogin && (
+                <button className="reg-btn" onClick={navigatetoRegister}>Register</button>
+            )}
 
       {error && <p className="error">{error}</p>}
     </form>

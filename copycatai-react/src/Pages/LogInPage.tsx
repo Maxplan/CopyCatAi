@@ -25,7 +25,7 @@ const LoginPage = () => {
   
   return (
     <div>
-      <h1>Login Page</h1>
+      <h2>Sign In</h2>
       <AuthForm action="login" onFormSubmit={loginUser} />
     </div>
   );
