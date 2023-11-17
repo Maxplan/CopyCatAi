@@ -7,10 +7,19 @@ import "../../Styles/sideBar.css";
 interface Conversation {
     conversationId: number;
     timestamp: string;
+    requests: string[];
+    responses: string[];
 }
 interface SidebarProps {
     authToken: string;
     userId: string;
+}
+
+const truncateString = (str: string, num: number) => {
+    if (str.length <= num) {
+        return str
+    }
+    return str.slice(0, num) + '...'
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ authToken, userId }) => {
@@ -40,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ authToken, userId }) => {
             <h3>History</h3>
             <ul>
                 {conversations.map((conversation, index) => (
-                    <li key={index}>Conversation {conversation.conversationId}</li>
+                    <li key={index}>{truncateString(conversation.requests[0], 15)}</li>
                 ))}
             </ul>
         </div>

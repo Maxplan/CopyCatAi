@@ -23,7 +23,7 @@ form input[type="password"] {
     padding: 8px;
     margin-top: 5px;
     border: 1px solid #ccc;
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius-small);
     box-sizing: border-box;
 }
 

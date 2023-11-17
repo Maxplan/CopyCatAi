@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: space-between;
     margin: 1em 1em 0 0 ;
-    height: 80vh;
+    height: 90vh;
 }
 .messageList{
 
@@ -20,17 +20,19 @@
     border-radius: var(--border-radius-medium);
     box-shadow: 0 0 1em var(--box-shadow-color);
     top: auto;
+    overflow-y: auto;
 }
 
 .messageList p{
     min-height: 2em;
+    height: fit-content;
     padding: 0.5em;
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius-small);
     margin:1em;
     width: fit-content;
     max-width: 80%;
     box-shadow: 0 0 .5em var(--box-shadow-color);
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 .user-message{
     background-color: var(--highlighter-color);
@@ -41,6 +43,20 @@
     background-color: #d8d8d8;
     color: #000000;
     align-self: flex-start;
+}
+
+.messageList::-webkit-scrollbar {
+    width: 12px;
+}
+
+.messageList::-webkit-scrollbar-track {
+    background: var(--dark-primary);
+    margin: 1em;
+}
+
+.messageList::-webkit-scrollbar-thumb {
+    background-color: var(--dark-secondary);
+    border-radius: var(--border-radius-medium);
 }
 
 @media screen and (max-width: 768px) {

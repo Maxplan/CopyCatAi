@@ -3,10 +3,11 @@
     flex-direction: column;
     border-radius: var(--border-radius-medium);
     box-shadow: 0 0 1em var(--box-shadow-color);
-    padding: 1em;
+    padding: 1em 0.25em;
     margin: 1em 1em 0 1em;
-    height: 80vh;
-    min-width: 20%;
+    height: 90vh;
+    min-width: 14em;
+    width: 15%;
     overflow-y: auto;
     background-color: var(--dark-primary);
 }
@@ -19,22 +20,23 @@
 .sidebar ul {
     display:flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100%;
 }
 .sidebar li{
     list-style: none;
     box-shadow: 0 0 .25em var(--box-shadow-color);
-    padding: 0.5em;
+    padding: 0.5em 1em;
+    margin: 0.5em;
     border-radius: var(--border-radius-small);
     transition: all 0.2s ease-in-out;
-    text-align: center;
+    
     color: var(--dark-text);
 }
 .sidebar li:hover{
-    background-color: #9c9c9c;
+    background-color: var(--dark-text);
     cursor: pointer;
-    color: var(--dark-primary);
+    color: var(--dark-secondary);
 }
 .sidebar::-webkit-scrollbar {
     width: 12px;

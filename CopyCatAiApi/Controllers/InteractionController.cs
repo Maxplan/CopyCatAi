@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CopyCatAiApi.DTOs;
 using CopyCatAiApi.Models;
 using CopyCatAiApi.Services;
 using Microsoft.AspNetCore.Identity;
@@ -37,7 +38,7 @@ namespace CopyCatAiApi.Controllers
                 var newConversation = new ConversationModel()
                 {
                     UserId = userId,
-                    Timestamp = DateTime.Now
+                    Timestamp = DateTime.Now,
                 };
 
                 await _conversationService.SaveConversationToDatabase(newConversation);
@@ -115,7 +116,7 @@ namespace CopyCatAiApi.Controllers
         }
 
         [HttpGet("GetConversationByUserId")]
-        public async Task<IActionResult> GetConversationByUserId(int limit = 14)
+        public async Task<IActionResult> GetConversationByUserId()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -124,9 +125,46 @@ namespace CopyCatAiApi.Controllers
                 return Unauthorized();
             }
 
-            var conversations = await _conversationService.GetConversationsByUserId(userId, limit);
+            var conversations = await _conversationService.GetConversationsByUserId(userId);
+            var conversationsReqRes = new List<ConversationDTO>();
 
-            return Ok(conversations);
+            foreach (var convo in conversations)
+            {
+                var requests = await _conversationService.GetRequestsByConversationId(convo.ConversationId);
+                var responses = await _conversationService.GetResponsesByConversationId(convo.ConversationId);
+
+                if (!requests.Any())
+                {
+                    continue;
+                }
+
+                var DTO = new ConversationDTO()
+                {
+                    ConversationId = convo.ConversationId,
+                    Requests = requests.Select(r => r.Request).ToList(),
+                    Responses = responses.Select(r => r.Response).ToList(),
+                    Timestamp = convo.Timestamp
+                };
+                conversationsReqRes.Add(DTO);
+            }
+
+            return Ok(conversationsReqRes);
+        }
+
+        [HttpDelete("DeleteConversation")]
+        public async Task<IActionResult> DeleteConversation(int conversationId)
+        {
+
+            var conversation = await _conversationService.GetConversationById(conversationId);
+
+            if (conversation == null)
+            {
+                return NotFound();
+            }
+
+            await _conversationService.DeleteConversationById(conversationId);
+
+            return Ok("Conversation deleted.");
         }
     }
 }
