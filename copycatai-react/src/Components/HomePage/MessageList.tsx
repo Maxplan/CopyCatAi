@@ -4,7 +4,7 @@ import MessageItem from "./MessageItem";
 interface MessageListProps {
     messages: {
         type: "user" | "assistant"
-        text: string
+        text: string | JSX.Element[]
     }[]
 }
 

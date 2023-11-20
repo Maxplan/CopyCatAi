@@ -2,8 +2,8 @@ import React from 'react';
 
 interface MessageItemProps {
     message: {
-        type: "user" | "assistant"
-        text: string
+      type: "user" | "assistant";
+      text: string | JSX.Element[];
     }
 }
 
