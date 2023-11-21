@@ -45,9 +45,8 @@ namespace CopyCatAiApi.Services
             {
                 // Read the response
                 var responseString = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<OpenAIResponse>(responseString);
+                var responseObject = JsonConvert.DeserializeObject<OpenAIResponse>(responseString)!;
 
-                // Return the response
                 return responseObject.Choices?[0].Message?.Content ?? "";
             }
             else
@@ -56,6 +55,27 @@ namespace CopyCatAiApi.Services
                 var errorResponse = await response.Content.ReadAsStringAsync();
                 throw new Exception($"OpenAI API call failed: {response.StatusCode}, Details: {errorResponse}");
             }
+        }
+
+        // Get the embedding for a text
+        public async Task<string> GetEmbedding(string textBlock)
+        {
+            var data = new
+            {
+                model = "text-embedding-ada-002",
+                input = textBlock
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            // Use the already configured _httpClient instance
+            var response = await _httpClient.PostAsync("embeddings", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return responseContent;
+            }
+            throw new Exception($"OpenAI API call failed: {response.StatusCode}");
         }
 
         // Classes for deserializing the response from OpenAI

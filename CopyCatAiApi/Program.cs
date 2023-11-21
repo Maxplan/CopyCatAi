@@ -37,6 +37,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<ConversationService>();
+builder.Services.AddScoped<FileService>();
 // Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -70,6 +71,8 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
+
+
 
 var app = builder.Build();
 

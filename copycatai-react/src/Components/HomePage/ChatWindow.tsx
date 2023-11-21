@@ -7,7 +7,7 @@ import { formatResponse } from '../Shared/FormattingService';
 // Define the structure of a message
 interface Message {
   type: 'user' | 'assistant';
-  text: string;
+  text: string | JSX.Element[];
 }
 
 const ChatWindow: React.FC = () => {
@@ -38,30 +38,28 @@ const ChatWindow: React.FC = () => {
 
     const sendMessageToApi = async (conversation: Message[]) => {
         try {
-        // Format the conversation for the API request
-        const formattedConversation = conversation.map(msg => ({
-            Role: msg.type,
-            Content: msg.text
-        }));
-
-        console.log("Sending message to API: ", formattedConversation); // Debugging line
-
-        const response = await fetch('http://localhost:5119/api/v1/Interaction/Sendmessage', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            body: JSON.stringify({ conversation: formattedConversation, conversationId })
-        });
-
+            const formattedConversation = conversation.map(msg => ({
+                Role: msg.type, // Ensure these field names match the ChatMessage class in your API
+                Content: typeof msg.text === 'string' ? msg.text : msg.text.join(''),
+            }));
+        
+            console.log("Sending message to API: ", formattedConversation);
+            const response = await fetch('http://localhost:5119/api/v1/Interaction/Sendmessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ conversation: formattedConversation, conversationId })
+            });
+        
             if (!response.ok) {
                 const errorResponse = await response.text();
                 console.error("Error response from API: ", errorResponse);
                 throw new Error('Error in sending message to API');
             }
-
-            const data = await response.json();
+        
+            const data = await response.text();
             return data;
         } catch (error) {
             console.error("Failed to send message: ", error);
@@ -79,16 +77,23 @@ const ChatWindow: React.FC = () => {
             const fullConversation = messages.concat(newUserMessage);
             const apiResponse = await sendMessageToApi(fullConversation);
 
-            const textResponse = apiResponse.response || "Error in sending message";
+            // Parse the JSON response
+            const parsedResponse = JSON.parse(apiResponse);
+
+            // Extract the 'response' field from the parsed response
+            const textResponse = parsedResponse.response;
+
+            // Update the conversation ID if provided in the response
+            if (parsedResponse.conversationId) {
+                setConversationId(parsedResponse.conversationId);
+            }
+
+            const formattedTextResponse = formatResponse(textResponse || "Error in sending message");
 
             setMessages(currentMessages => {
                 const messagesWithoutLoading = currentMessages.slice(0, -1);
-                return [...messagesWithoutLoading, { type: 'assistant', text: textResponse }];
+                return [...messagesWithoutLoading, { type: 'assistant', text: formattedTextResponse }];
             });
-
-            if (apiResponse.conversationId) {
-                setConversationId(apiResponse.conversationId);
-            }
         } catch (error) {
             setMessages(currentMessages => {
                 const messagesWithoutLoading = currentMessages.slice(0, -1);
@@ -98,14 +103,11 @@ const ChatWindow: React.FC = () => {
     };
 
     return (
-        <div className="chat-container">
-            <MessageList messages={messages.map(msg => ({
-                ...msg,
-                text: msg.type === 'assistant' ? formatResponse(msg.text) : msg.text
-            }))} />
-            <InputBar onSendMessage={handleSendMessage} />
-        </div>
-    );
+            <div className="chat-container">
+                <MessageList messages={messages} />
+                <InputBar onSendMessage={handleSendMessage} />
+            </div>
+  );
 };
 
 export default ChatWindow;

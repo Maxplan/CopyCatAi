@@ -29,6 +29,7 @@
     box-shadow: 0 0 .5em var(--box-shadow-color);
     width: 80%;
     border-radius: var(--border-radius-small);
+    margin-top: 1em;
 }
 .code-language{
     width: 100%;
@@ -62,6 +63,7 @@ code{
     color: #37EE5E;
 }
 pre{
+    overflow-x: scroll;
     padding: 1em;
 }
 .user-message{
@@ -103,6 +105,19 @@ pre{
 
 .messageList::-webkit-scrollbar-thumb {
     background-color: var(--dark-secondary);
+    border-radius: var(--border-radius-medium);
+}
+
+pre::-webkit-scrollbar {
+    width: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+    background: var(--dark-secondary);
+}
+
+pre::-webkit-scrollbar-thumb {
+    background-color: var(--dark-primary);
     border-radius: var(--border-radius-medium);
 }
 

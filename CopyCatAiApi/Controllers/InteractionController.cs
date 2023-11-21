@@ -15,12 +15,14 @@ namespace CopyCatAiApi.Controllers
         private readonly OpenAIService _openAIService;
         private readonly UserManager<UserModel> _userManager;
         private readonly ConversationService _conversationService;
+        private readonly FileService _fileService;
 
-        public InteractionController(OpenAIService openAIService, UserManager<UserModel> userManager, ConversationService conversationService)
+        public InteractionController(OpenAIService openAIService, UserManager<UserModel> userManager, ConversationService conversationService, FileService fileService)
         {
             _openAIService = openAIService;
             _userManager = userManager;
             _conversationService = conversationService;
+            _fileService = fileService;
         }
 
         [HttpPost("Sendmessage")]
@@ -166,5 +168,18 @@ namespace CopyCatAiApi.Controllers
 
             return Ok("Conversation deleted.");
         }
+
+        [HttpGet("GetPdfText")]
+        public async Task<IActionResult> GetPdfTextTest()
+        {
+            var FilePath = "./Data/TestFiles/sample.pdf";
+            using var stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read);
+            var textBlocks = _fileService.ConvertPdfToText(stream);
+
+            var embeddings = await _fileService.ConvertTextBlocksToEmbeddings(textBlocks);
+
+            return embeddings != null ? Ok(embeddings) : NotFound();
+        }
+
     }
 }

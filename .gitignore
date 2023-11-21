@@ -11,3 +11,4 @@
 *.db-wal
 CopyCatAiApi/CopyCatAi.db-wal
 CopyCatAiApi/CopyCatAi.db-shm
+*.pdf
