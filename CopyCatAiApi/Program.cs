@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CopyCatAiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("sqlite")));
 
+builder.Services.AddSingleton<MongoDbContext>();
+
 // Add Identity
 builder.Services.AddIdentityCore<UserModel>(options =>
 {
@@ -38,6 +40,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<ConversationService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<EmbeddingService>();
+builder.Services.AddScoped<SimilaritySearchService>();
 // Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

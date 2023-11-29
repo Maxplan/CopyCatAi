@@ -42,24 +42,5 @@ namespace CopyCatAiApi.Services
             return textBlocks;
         }
 
-        public async Task<List<string>> ConvertTextBlocksToEmbeddings(List<string> textBlocks)
-        {
-            var embeddings = new List<string>();
-
-            foreach (var block in textBlocks)
-            {
-                try
-                {
-                    var embedding = await _openAIService.GetEmbedding(block);
-                    embeddings.Add(embedding);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-
-            return embeddings;
-        }
     }
 }

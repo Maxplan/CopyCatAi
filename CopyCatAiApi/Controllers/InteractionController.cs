@@ -1,10 +1,11 @@
 using System.Security.Claims;
+using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.DTOs;
 using CopyCatAiApi.Models;
 using CopyCatAiApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static CopyCatAiApi.Services.OpenAIService;
+using MongoDB.Bson.IO;
 
 namespace CopyCatAiApi.Controllers
 {
@@ -16,13 +17,19 @@ namespace CopyCatAiApi.Controllers
         private readonly UserManager<UserModel> _userManager;
         private readonly ConversationService _conversationService;
         private readonly FileService _fileService;
+        private readonly MongoDbContext _dbContext;
+        private readonly EmbeddingService _embeddingService;
+        private readonly SimilaritySearchService _similaritySearchService;
 
-        public InteractionController(OpenAIService openAIService, UserManager<UserModel> userManager, ConversationService conversationService, FileService fileService)
+        public InteractionController(SimilaritySearchService similaritySearchService, EmbeddingService embeddingService, OpenAIService openAIService, UserManager<UserModel> userManager, ConversationService conversationService, FileService fileService, MongoDbContext mongoDbContext)
         {
             _openAIService = openAIService;
             _userManager = userManager;
             _conversationService = conversationService;
             _fileService = fileService;
+            _dbContext = mongoDbContext;
+            _embeddingService = embeddingService;
+            _similaritySearchService = similaritySearchService;
         }
 
         [HttpPost("Sendmessage")]
@@ -169,17 +176,42 @@ namespace CopyCatAiApi.Controllers
             return Ok("Conversation deleted.");
         }
 
-        [HttpGet("GetPdfText")]
-        public async Task<IActionResult> GetPdfTextTest()
+        [HttpPost("ProcessPdfAndSaveEmbeddings")]
+        public async Task<IActionResult> ProcessPdfAndSaveEmbeddings(int conversationId, string userId)
         {
-            var FilePath = "./Data/TestFiles/sample.pdf";
+            var FilePath = "./Data/TestFiles/test2.pdf";
             using var stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read);
             var textBlocks = _fileService.ConvertPdfToText(stream);
+            //if (pdfFile == null || pdfFile.Length == 0)
+            //    return BadRequest("No file provided.");
+            //
+            //using var stream = pdfFile.OpenReadStream();
+            //var textBlocks = _fileService.ConvertPdfToText(stream);
 
-            var embeddings = await _fileService.ConvertTextBlocksToEmbeddings(textBlocks);
+            await _embeddingService.SaveEmbeddingsForTextBlocksAsync(textBlocks, conversationId, userId);
 
-            return embeddings != null ? Ok(embeddings) : NotFound();
+            return Ok("PDF processed and embeddings saved.");
         }
+        [HttpGet("GetEmbeddingsByConversationId")]
+        public async Task<IActionResult> GetEmbeddingsByConversationId(int conversationId)
+        {
+            var embeddings = await _embeddingService.GetEmbeddingsByConversationIdAsync(conversationId);
 
+            return Ok(embeddings);
+        }
+        [HttpGet("get-prompt-embedding")]
+        public async Task<IActionResult> GetPromptEmbedding(string prompt)
+        {
+            var embedding = await _openAIService.GetEmbedding(prompt);
+
+            return Ok(embedding);
+        }
+        [HttpGet("get-similarity-search")]
+        public async Task<IActionResult> GetSimilaritySearch(string prompt, int conversationId, double threshold)
+        {
+            var results = await _similaritySearchService.PerformSimilaritySearch(prompt, conversationId, threshold);
+
+            return Ok(results);
+        }
     }
 }

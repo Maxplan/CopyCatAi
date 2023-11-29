@@ -1,6 +1,7 @@
 // Purpose: Service for communicating with OpenAI API.
 
 using System.Text;
+using CopyCatAiApi.Models;
 using Newtonsoft.Json;
 
 namespace CopyCatAiApi.Services
@@ -58,7 +59,7 @@ namespace CopyCatAiApi.Services
         }
 
         // Get the embedding for a text
-        public async Task<string> GetEmbedding(string textBlock)
+        public async Task<List<float>> GetEmbedding(string textBlock)
         {
             var data = new
             {
@@ -73,12 +74,22 @@ namespace CopyCatAiApi.Services
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
-                return responseContent;
+                var embeddingResponse = JsonConvert.DeserializeObject<EmbeddingResponse>(responseContent)!;
+                return embeddingResponse.Data?[0].Embedding!;
             }
             throw new Exception($"OpenAI API call failed: {response.StatusCode}");
         }
 
         // Classes for deserializing the response from OpenAI
+        public class EmbeddingResponse
+        {
+            public List<DataItem>? Data { get; set; }
+        }
+
+        public class DataItem
+        {
+            public List<float>? Embedding { get; set; }
+        }
         public class OpenAIResponse
         {
             public List<ChatChoice>? Choices { get; set; }
