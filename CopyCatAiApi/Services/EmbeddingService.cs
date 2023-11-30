@@ -1,12 +1,13 @@
 // Purpose: Provide services for embedding data.
 
 using CopyCatAiApi.Data.Contexts;
+using CopyCatAiApi.Interfaces;
 using CopyCatAiApi.Models;
 using MongoDB.Driver;
 
 namespace CopyCatAiApi.Services
 {
-    public class EmbeddingService
+    public class EmbeddingService : IEmbeddingService
     {
         private readonly MongoDbContext _dbContext;
         private readonly OpenAIService _openAIService;

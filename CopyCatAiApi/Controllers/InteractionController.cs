@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.DTOs;
+using CopyCatAiApi.Interfaces;
 using CopyCatAiApi.Models;
 using CopyCatAiApi.Services;
 using Microsoft.AspNetCore.Identity;
@@ -18,17 +19,17 @@ namespace CopyCatAiApi.Controllers
         private readonly ConversationService _conversationService;
         private readonly FileService _fileService;
         private readonly MongoDbContext _dbContext;
-        private readonly EmbeddingService _embeddingService;
+        private readonly EmbeddingServiceFactory _embeddingServiceFactory;
         private readonly SimilaritySearchService _similaritySearchService;
 
-        public InteractionController(SimilaritySearchService similaritySearchService, EmbeddingService embeddingService, OpenAIService openAIService, UserManager<UserModel> userManager, ConversationService conversationService, FileService fileService, MongoDbContext mongoDbContext)
+        public InteractionController(SimilaritySearchService similaritySearchService, EmbeddingServiceFactory embeddingServiceFactory, OpenAIService openAIService, UserManager<UserModel> userManager, ConversationService conversationService, FileService fileService, MongoDbContext mongoDbContext)
         {
             _openAIService = openAIService;
             _userManager = userManager;
             _conversationService = conversationService;
             _fileService = fileService;
             _dbContext = mongoDbContext;
-            _embeddingService = embeddingService;
+            _embeddingServiceFactory = embeddingServiceFactory;
             _similaritySearchService = similaritySearchService;
         }
 
@@ -78,6 +79,12 @@ namespace CopyCatAiApi.Controllers
             return Ok(new { Response = responseContent, conversationId = request.ConversationId });
         }
 
+        [HttpPost("SendPdfMessage")]
+        public async Task<IActionResult> SendPdfMessage(string prompt, int conversationId, double threshold)
+        {
+            var result = await _openAIService.SendPdfMessageToOpenAI(prompt, conversationId, threshold);
+            return Ok(result.ToString());
+        }
 
         [HttpPost("StartConversation")]
         public async Task<IActionResult> StartConversation()
@@ -179,7 +186,8 @@ namespace CopyCatAiApi.Controllers
         [HttpPost("ProcessPdfAndSaveEmbeddings")]
         public async Task<IActionResult> ProcessPdfAndSaveEmbeddings(int conversationId, string userId)
         {
-            var FilePath = "./Data/TestFiles/test2.pdf";
+            var embeddingService = _embeddingServiceFactory.Create();
+            var FilePath = "./Data/TestFiles/test4.pdf";
             using var stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read);
             var textBlocks = _fileService.ConvertPdfToText(stream);
             //if (pdfFile == null || pdfFile.Length == 0)
@@ -188,14 +196,15 @@ namespace CopyCatAiApi.Controllers
             //using var stream = pdfFile.OpenReadStream();
             //var textBlocks = _fileService.ConvertPdfToText(stream);
 
-            await _embeddingService.SaveEmbeddingsForTextBlocksAsync(textBlocks, conversationId, userId);
+            await embeddingService.SaveEmbeddingsForTextBlocksAsync(textBlocks, conversationId, userId);
 
             return Ok("PDF processed and embeddings saved.");
         }
         [HttpGet("GetEmbeddingsByConversationId")]
         public async Task<IActionResult> GetEmbeddingsByConversationId(int conversationId)
         {
-            var embeddings = await _embeddingService.GetEmbeddingsByConversationIdAsync(conversationId);
+            var embeddingService = _embeddingServiceFactory.Create();
+            var embeddings = await embeddingService.GetEmbeddingsByConversationIdAsync(conversationId);
 
             return Ok(embeddings);
         }

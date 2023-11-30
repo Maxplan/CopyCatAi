@@ -1,23 +1,26 @@
 using Microsoft.OpenApi.Services;
 using CopyCatAiApi.Models;
+using CopyCatAiApi.Interfaces;
 
 namespace CopyCatAiApi.Services
 {
     public class SimilaritySearchService
     {
-        private readonly EmbeddingService _embeddingService;
-        private readonly OpenAIService _openAIService;
+        private readonly EmbeddingServiceFactory _embeddingServiceFactory;
+        private readonly IServiceProvider _serviceProvider;
 
-        public SimilaritySearchService(EmbeddingService embeddingService, OpenAIService openAIService)
+        public SimilaritySearchService(EmbeddingServiceFactory embeddingServiceFactory, IServiceProvider serviceProvider)
         {
-            _embeddingService = embeddingService;
-            _openAIService = openAIService;
+            _embeddingServiceFactory = embeddingServiceFactory;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<List<Models.SearchResult>> PerformSimilaritySearch(string prompt, int conversationId, double threshold)
         {
-            var promptEmbedding = await _openAIService.GetEmbedding(prompt);
-            var embeddings = await _embeddingService.GetEmbeddingsByConversationIdAsync(conversationId);
+            var embeddingService = _embeddingServiceFactory.Create();
+            var openAIService = _serviceProvider.GetRequiredService<OpenAIService>();
+            var promptEmbedding = await openAIService.GetEmbedding(prompt);
+            var embeddings = await embeddingService.GetEmbeddingsByConversationIdAsync(conversationId);
 
             var results = new List<Models.SearchResult>();
 
@@ -38,7 +41,8 @@ namespace CopyCatAiApi.Services
             // Sort by descending similarity score
             results.Sort((a, b) => b.SimilarityScore.CompareTo(a.SimilarityScore));
 
-            return results;
+            // Take only the top 5 results
+            return results.Take(10).ToList();
         }
 
         // Get the most similar text block

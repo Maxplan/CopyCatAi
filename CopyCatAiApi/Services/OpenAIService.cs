@@ -10,10 +10,12 @@ namespace CopyCatAiApi.Services
     {
         // Private fields
         private readonly HttpClient _httpClient;
+        private readonly SimilaritySearchService _similarityService;
 
         // Constructor using dependency injection
-        public OpenAIService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public OpenAIService(IHttpClientFactory httpClientFactory, IConfiguration configuration, SimilaritySearchService similaritySearchService)
         {
+            _similarityService = similaritySearchService;
             _httpClient = httpClientFactory.CreateClient();
             _httpClient.BaseAddress = new Uri("https://api.openai.com/v1/");
 
@@ -57,6 +59,25 @@ namespace CopyCatAiApi.Services
                 throw new Exception($"OpenAI API call failed: {response.StatusCode}, Details: {errorResponse}");
             }
         }
+
+        public async Task<string> SendPdfMessageToOpenAI(string prompt, int conversationId, double threshold)
+        {
+            // Perform the similarity search to get top 5 similar items
+            var similarItems = await _similarityService.PerformSimilaritySearch(prompt, conversationId, threshold);
+
+            // Extract the Text property from each SearchResult item and concatenate
+            var concatenatedTexts = string.Join(" ", similarItems.Select(si => si.Text));
+
+            // Construct the message to be sent to OpenAI
+            string messageToSend = $"PDF File: {concatenatedTexts}\nPrompt: {prompt}";
+
+            // Convert the message into ChatMessage format
+            var chatMessage = new ChatMessage { Role = "user", Content = messageToSend };
+
+            // Send the message to OpenAI
+            return await SendMessageToOpenAI(new List<ChatMessage> { chatMessage });
+        }
+
 
         // Get the embedding for a text
         public async Task<List<float>> GetEmbedding(string textBlock)

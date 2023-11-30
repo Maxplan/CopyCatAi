@@ -1,6 +1,7 @@
 using System.Text;
 using CopyCatAiApi.Data;
 using CopyCatAiApi.Data.Contexts;
+using CopyCatAiApi.Interfaces;
 using CopyCatAiApi.Models;
 using CopyCatAiApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,7 +41,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<ConversationService>();
 builder.Services.AddScoped<FileService>();
-builder.Services.AddScoped<EmbeddingService>();
+builder.Services.AddScoped<IEmbeddingService, EmbeddingService>();
+builder.Services.AddScoped<EmbeddingServiceFactory>();
 builder.Services.AddScoped<SimilaritySearchService>();
 // Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

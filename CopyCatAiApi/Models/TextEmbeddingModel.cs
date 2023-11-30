@@ -11,6 +11,7 @@ namespace CopyCatAiApi.Models
         public string? UserId { get; set; }
         public int ConversationId { get; set; }
         public string? BlockId { get; set; }
+        public string? Title { get; set; }
         public List<float>? Embedding { get; set; }
         public string? Text { get; set; }
         public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
