@@ -38,11 +38,73 @@
     transition: all 0.15s ease-in-out;
     box-shadow: 0 0 .5em var(--box-shadow-color);
     background-color: var(--dark-text);
+    padding: 0.5em;
 }
 
 .inputBar button:hover{
     cursor: pointer;
     background-color: var(--highlighter-color);
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2em;
+    height: 2em;
+    border: none;
+    margin: 0 1em 0 0.5em;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+.custom-file-upload-attached {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2em;
+    height: 2em;
+    border: none;
+    margin: 0 1em 0 0.5em;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+.custom-file-upload img{
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
+}
+
+.custom-file-upload-attached img {
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
+}
+
+.send-message-button img{
+    width: 70%;
+    height: 70%;
+    object-fit: cover;
+}
+
+.custom-file-upload svg path{
+    fill: var(--dark-);
+}
+
+.custom-file-upload:hover{
+    box-shadow: 0 0 .5em var(--dark-text);
+    border-radius: var(--border-radius-small);
+}
+
+.custom-file-upload-attached{
+    background-color: var(--highlighter-color);
+    box-shadow: 0 0 .5em var(--dark-secondary);
+        border-radius: var(--border-radius-small);
 }
 
 textarea::-webkit-scrollbar {

@@ -1,18 +1,14 @@
 // Purpose: Show historic conversations and allow user to select one to view
 
 import React, { useState, useEffect } from "react";
+import Conversation from "../Shared/ConversationTypes";
 
 import "../../Styles/sideBar.css";
 
-interface Conversation {
-    conversationId: number;
-    timestamp: string;
-    requests: string[];
-    responses: string[];
-}
 interface SidebarProps {
     authToken: string;
     userId: string;
+    onConversationSelect: (conversationId: number) => Promise<void>;
 }
 
 const truncateString = (str: string, num: number) => {
@@ -22,7 +18,7 @@ const truncateString = (str: string, num: number) => {
     return str.slice(0, num) + '...'
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ authToken, userId }) => {
+const Sidebar: React.FC<SidebarProps> = ({ authToken, userId, onConversationSelect }) => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
     useEffect(() => {
@@ -49,7 +45,9 @@ const Sidebar: React.FC<SidebarProps> = ({ authToken, userId }) => {
             <h3>History</h3>
             <ul>
                 {conversations.map((conversation, index) => (
-                    <li key={index}>{truncateString(conversation.requests[0], 15)}</li>
+                    <li key={index} onClick={() => onConversationSelect(conversation.conversationId)}>
+                        {truncateString(conversation.requests[0], 15)}
+                    </li>
                 ))}
             </ul>
         </div>

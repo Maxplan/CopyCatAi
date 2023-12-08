@@ -108,6 +108,8 @@ namespace CopyCatAiApi.Services
                 .Where(c => c.ConversationId == conversationId)
                 .FirstOrDefaultAsync() ?? throw new Exception("No conversation found with this id.");
 
+            var req = result.RequestList = await GetRequestsByConversationId(conversationId);
+
             return result;
         }
 

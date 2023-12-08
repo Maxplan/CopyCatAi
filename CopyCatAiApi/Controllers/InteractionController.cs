@@ -1,3 +1,5 @@
+// Purpose: Controller for interaction with Frontend
+
 using System.Security.Claims;
 using CopyCatAiApi.Data.Contexts;
 using CopyCatAiApi.DTOs;
@@ -7,6 +9,8 @@ using CopyCatAiApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson.IO;
+using Org.BouncyCastle.Ocsp;
+using static CopyCatAiApi.Services.OpenAIService;
 
 namespace CopyCatAiApi.Controllers
 {
@@ -14,6 +18,7 @@ namespace CopyCatAiApi.Controllers
     [Route("api/v1/[controller]")]
     public class InteractionController : ControllerBase
     {
+        // --Dependency Injection--
         private readonly OpenAIService _openAIService;
         private readonly UserManager<UserModel> _userManager;
         private readonly ConversationService _conversationService;
@@ -22,6 +27,7 @@ namespace CopyCatAiApi.Controllers
         private readonly EmbeddingServiceFactory _embeddingServiceFactory;
         private readonly SimilaritySearchService _similaritySearchService;
 
+        // --Constructor--
         public InteractionController(SimilaritySearchService similaritySearchService, EmbeddingServiceFactory embeddingServiceFactory, OpenAIService openAIService, UserManager<UserModel> userManager, ConversationService conversationService, FileService fileService, MongoDbContext mongoDbContext)
         {
             _openAIService = openAIService;
@@ -33,16 +39,19 @@ namespace CopyCatAiApi.Controllers
             _similaritySearchService = similaritySearchService;
         }
 
+        // --Methods--
+        // Send a message to OpenAI
         [HttpPost("Sendmessage")]
         public async Task<IActionResult> SendMessage([FromBody] SendMessageRequestModel request)
         {
+            // Get the user ID from the JWT token
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
+            // If the user ID is null, return an unauthorized response
             if (userId == null)
             {
                 return Unauthorized();
             }
-
+            // If the conversation ID is null, create a new conversation
             if (!request.ConversationId.HasValue)
             {
                 var newConversation = new ConversationModel()
@@ -50,21 +59,85 @@ namespace CopyCatAiApi.Controllers
                     UserId = userId,
                     Timestamp = DateTime.Now,
                 };
-
+                // Save the conversation to the database
                 await _conversationService.SaveConversationToDatabase(newConversation);
+                // Set the conversation ID to the new conversation's ID
                 request.ConversationId = newConversation.ConversationId;
             }
 
+            // Send the message to OpenAI
+            // Get the last message in the conversation
             var lastRequest = request.Conversation!.Last().Content!;
-
+            // Send the last message to OpenAI
             var requestModel = new RequestModel()
             {
                 Request = lastRequest,
                 ConversationId = request.ConversationId.Value,
                 TimeStamp = DateTime.Now
             };
-
+            // Get the response from OpenAI
             var responseContent = await _openAIService.SendMessageToOpenAI(request.Conversation!);
+            // Save the request and response to the database
+            var responseModel = new ResponseModel()
+            {
+                Response = responseContent,
+                ConversationId = request.ConversationId.Value,
+                TimeStamp = DateTime.Now
+            };
+
+            await _conversationService.SaveRequestToDatabase(requestModel);
+            await _conversationService.SaveResponseToDatabase(responseModel);
+            // Return the response from OpenAI
+            return Ok(new { Response = responseContent, conversationId = request.ConversationId });
+        }
+
+        // Send a message to OpenAI with a PDF file
+        [HttpPost("SendPdfMessage")]
+        public async Task<IActionResult> SendPdfMessage([FromBody] SendMessageRequestModel request, [FromForm] IFormFile pdfFile)
+        {
+            // Get the user ID from the JWT token
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            // If the user ID is null, return an unauthorized response
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            // If the conversation ID is null, create a new conversation
+            if (!request.ConversationId.HasValue)
+            {
+                var newConversation = new ConversationModel()
+                {
+                    UserId = userId,
+                    Timestamp = DateTime.Now,
+                };
+                // Save the conversation to the database
+                await _conversationService.SaveConversationToDatabase(newConversation);
+                // Set the conversation ID to the new conversation's ID
+                request.ConversationId = newConversation.ConversationId;
+            }
+
+            // Process PDF and save embeddings
+            using var stream = new MemoryStream();
+            await pdfFile.CopyToAsync(stream);
+            var textBlocks = _fileService.ConvertPdfToText(stream);
+            var embeddingService = _embeddingServiceFactory.Create();
+            await embeddingService.SaveEmbeddingsForTextBlocksAsync(textBlocks, request.ConversationId.Value, userId);
+
+            // Perform Similarity Search
+            var similarTextBlocks = await _similaritySearchService.PerformSimilaritySearch(request.Conversation!.Last().Content!, request.ConversationId.Value, 0.5);
+            var concatenatedText = string.Join(" ", similarTextBlocks.Select(block => block.Text));
+
+            // Send concatenated text and user prompt to OpenAI
+            var openAIRequest = $"PDF: {concatenatedText} \n Prompt: {request.Conversation!.Last().Content!}";
+            var responseContent = await _openAIService.SendMessageToOpenAI(new List<ChatMessage> { new ChatMessage { Role = "user", Content = openAIRequest } });
+
+            // Save Request and Response to Database
+            var requestModel = new RequestModel()
+            {
+                Request = openAIRequest,
+                ConversationId = request.ConversationId.Value,
+                TimeStamp = DateTime.Now
+            };
 
             var responseModel = new ResponseModel()
             {
@@ -75,36 +148,75 @@ namespace CopyCatAiApi.Controllers
 
             await _conversationService.SaveRequestToDatabase(requestModel);
             await _conversationService.SaveResponseToDatabase(responseModel);
-
-            return Ok(new { Response = responseContent, conversationId = request.ConversationId });
+            // Return the response from OpenAI
+            return Ok(new { Response = responseContent, ConversationId = request.ConversationId });
         }
 
-        [HttpPost("SendPdfMessage")]
-        public async Task<IActionResult> SendPdfMessage(string prompt, int conversationId, double threshold)
-        {
-            var result = await _openAIService.SendPdfMessageToOpenAI(prompt, conversationId, threshold);
-            return Ok(result.ToString());
-        }
-
+        // Start a new conversation
         [HttpPost("StartConversation")]
         public async Task<IActionResult> StartConversation()
         {
+            // Get the user ID from the JWT token
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
+            // If the user ID is null, return an unauthorized response
             if (userId == null)
             {
                 return Unauthorized();
             }
-
+            // Create a new conversation
             var newConversation = new ConversationModel()
             {
                 UserId = userId,
                 Timestamp = DateTime.Now
             };
-
+            // Save the conversation to the database
             await _conversationService.SaveConversationToDatabase(newConversation);
-
+            // Return the conversation ID
             return Ok(new { conversationId = newConversation.ConversationId });
+        }
+
+        [HttpGet("GetConversationById")]
+        public async Task<IActionResult> GetConversationById(int conversationId)
+        {
+            var conversation = await _conversationService.GetConversationById(conversationId);
+
+            if (conversation == null)
+            {
+                return NotFound("Conversation not found.");
+            }
+
+            return Ok(conversation);
+        }
+
+        [HttpGet("GetConversationDetails")]
+
+        public async Task<IActionResult> GetConversationDetails(int conversationId)
+        {
+            var conversation = await _conversationService.GetConversationById(conversationId);
+
+            if (conversation == null)
+            {
+                return NotFound("Conversation not found.");
+            }
+
+            var requests = await _conversationService.GetRequestsByConversationId(conversationId);
+            var responses = await _conversationService.GetResponsesByConversationId(conversationId);
+
+            if (!requests.Any() && !responses.Any())
+            {
+                return NotFound("Data not found.");
+            }
+
+
+            var conversationDTO = new ConversationDTO()
+            {
+                ConversationId = conversation.ConversationId,
+                Requests = requests.Select(r => r.Request).ToList(),
+                Responses = responses.Select(r => r.Response).ToList(),
+                Timestamp = requests.First().TimeStamp
+            };
+
+            return Ok(conversationDTO);
         }
 
         [HttpPost("RateResponse")]
@@ -183,23 +295,6 @@ namespace CopyCatAiApi.Controllers
             return Ok("Conversation deleted.");
         }
 
-        [HttpPost("ProcessPdfAndSaveEmbeddings")]
-        public async Task<IActionResult> ProcessPdfAndSaveEmbeddings(int conversationId, string userId)
-        {
-            var embeddingService = _embeddingServiceFactory.Create();
-            var FilePath = "./Data/TestFiles/test4.pdf";
-            using var stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read);
-            var textBlocks = _fileService.ConvertPdfToText(stream);
-            //if (pdfFile == null || pdfFile.Length == 0)
-            //    return BadRequest("No file provided.");
-            //
-            //using var stream = pdfFile.OpenReadStream();
-            //var textBlocks = _fileService.ConvertPdfToText(stream);
-
-            await embeddingService.SaveEmbeddingsForTextBlocksAsync(textBlocks, conversationId, userId);
-
-            return Ok("PDF processed and embeddings saved.");
-        }
         [HttpGet("GetEmbeddingsByConversationId")]
         public async Task<IActionResult> GetEmbeddingsByConversationId(int conversationId)
         {

@@ -34,7 +34,7 @@ const Header = () => {
 
   return (
     <div className="header">
-            <h1 className="logo"><a href="/">CopyCat AI</a></h1>
+            <h1 className="logo"><a href="/">CopyCat.AI</a></h1>
             <div className="hamburger-menu" onClick={toggleMenu}>
                 <span></span>
                 <span></span>
