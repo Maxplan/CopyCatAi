@@ -5,7 +5,11 @@ import sendIcon from "../../imgs/send.svg";
 import uploadIconAttached from "../../imgs/add-document-attached.svg";
 
 interface InputBarProps {
-    onSendMessage: (message: string, file?: File) => void;
+    onSendMessage: (message: Message, file?: File) => void;
+}
+interface Message {
+  role: 'user' | 'assistant';
+  content: string | JSX.Element[]; // Ensure this matches the structure you're sending
 }
 
 const InputBar: React.FC<InputBarProps> = ({ onSendMessage }) => { 
@@ -38,7 +42,8 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage }) => {
     const handleSend = () => { 
         const trimmedInput = input.trim();
         if (trimmedInput || file) {
-            onSendMessage(trimmedInput, file || undefined);
+            const message: Message = { role: "user", content: trimmedInput };
+            onSendMessage(message, file ? file : undefined);
             setInput("");
             setFile(null);
             if (textAreaRef.current) {

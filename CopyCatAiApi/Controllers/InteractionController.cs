@@ -93,15 +93,15 @@ namespace CopyCatAiApi.Controllers
 
         // Send a message to OpenAI with a PDF file
         [HttpPost("SendPdfMessage")]
-        public async Task<IActionResult> SendPdfMessage([FromBody] SendMessageRequestModel request, [FromForm] IFormFile pdfFile)
+        public async Task<IActionResult> SendPdfMessage([FromForm] SendMessageRequestModel request, [FromForm] IFormFile pdfFile)
         {
             // Get the user ID from the JWT token
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            // If the user ID is null, return an unauthorized response
             if (userId == null)
             {
                 return Unauthorized();
             }
+
             // If the conversation ID is null, create a new conversation
             if (!request.ConversationId.HasValue)
             {
@@ -114,21 +114,37 @@ namespace CopyCatAiApi.Controllers
                 await _conversationService.SaveConversationToDatabase(newConversation);
                 // Set the conversation ID to the new conversation's ID
                 request.ConversationId = newConversation.ConversationId;
+                request.Conversation = new List<ChatMessage>();
+                request.Conversation.Add(new ChatMessage { Role = "user", Content = request.Conversation.ToString()! });
+            }
+
+            // Check if conversation has at least one message
+            if (request.Conversation == null || request.Conversation.Count == 0)
+            {
+                return BadRequest("The conversation cannot be empty.");
+            }
+
+            // Extract the last user message from the conversation
+            var lastUserMessage = request.Conversation.LastOrDefault(msg => msg.Role == "user")?.Content;
+            if (string.IsNullOrEmpty(lastUserMessage))
+            {
+                return BadRequest("No user message found in the conversation.");
             }
 
             // Process PDF and save embeddings
             using var stream = new MemoryStream();
             await pdfFile.CopyToAsync(stream);
+            stream.Position = 0;
             var textBlocks = _fileService.ConvertPdfToText(stream);
             var embeddingService = _embeddingServiceFactory.Create();
             await embeddingService.SaveEmbeddingsForTextBlocksAsync(textBlocks, request.ConversationId.Value, userId);
 
             // Perform Similarity Search
-            var similarTextBlocks = await _similaritySearchService.PerformSimilaritySearch(request.Conversation!.Last().Content!, request.ConversationId.Value, 0.5);
+            var similarTextBlocks = await _similaritySearchService.PerformSimilaritySearch(lastUserMessage, request.ConversationId.Value, 0.5);
             var concatenatedText = string.Join(" ", similarTextBlocks.Select(block => block.Text));
 
             // Send concatenated text and user prompt to OpenAI
-            var openAIRequest = $"PDF: {concatenatedText} \n Prompt: {request.Conversation!.Last().Content!}";
+            var openAIRequest = $"PDF: {concatenatedText} \n Prompt: {lastUserMessage}";
             var responseContent = await _openAIService.SendMessageToOpenAI(new List<ChatMessage> { new ChatMessage { Role = "user", Content = openAIRequest } });
 
             // Save Request and Response to Database
@@ -148,9 +164,12 @@ namespace CopyCatAiApi.Controllers
 
             await _conversationService.SaveRequestToDatabase(requestModel);
             await _conversationService.SaveResponseToDatabase(responseModel);
+
             // Return the response from OpenAI
             return Ok(new { Response = responseContent, ConversationId = request.ConversationId });
         }
+
+
 
         // Start a new conversation
         [HttpPost("StartConversation")]

@@ -12,3 +12,4 @@
 CopyCatAiApi/CopyCatAi.db-wal
 CopyCatAiApi/CopyCatAi.db-shm
 *.pdf
+CopyCatAiApi/appsettings.Development.json

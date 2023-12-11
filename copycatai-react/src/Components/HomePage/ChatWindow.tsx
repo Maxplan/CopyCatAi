@@ -7,8 +7,8 @@ import Conversation from '../Shared/ConversationTypes';
 
 // Define the structure of a message
 interface Message {
-  type: 'user' | 'assistant';
-  text: string | JSX.Element[];
+  role: 'user' | 'assistant';
+  content: string | JSX.Element[];
 }
 
 interface ChatWindowProps {
@@ -27,10 +27,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
         
         for (let i = 0; i < length; i++) {
             if (i < arr1.length) {
-                result.push({ type: 'user', text: arr1[i] });
+                const formattedRequest = formatResponse(arr1[i]);
+                result.push({ role: 'user', content: formattedRequest });
             }
             if (i < arr2.length) {
-                result.push({ type: 'assistant', text: arr2[i] });
+                const formattedResponse = formatResponse(arr2[i]);
+                result.push({ role: 'assistant', content: formattedResponse });
             }
     }
 
@@ -85,8 +87,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
     const sendTextMessageToApi = async (conversation: Message[]) => {
         try {
             const formattedConversation = conversation.map(msg => ({
-                Role: msg.type,
-                Content: typeof msg.text === 'string' ? msg.text : msg.text.join(''),
+                Role: msg.role,
+                Content: typeof msg.content === 'string' ? msg.content : msg.content.join(''),
             }));
 
             const response = await fetch('http://localhost:5119/api/v1/Interaction/Sendmessage', {
@@ -128,44 +130,74 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
         }
     };
 
-    const handleSendMessage = async (messageText: string, file?: File) => {
-        const newUserMessage: Message = { type: 'user', text: messageText };
-        const loadingMessage: Message = { type: 'assistant', text: '...' };
-        setMessages(currentMessages => [...currentMessages, newUserMessage, loadingMessage]);
-
-        const fullConversation = messages.concat(newUserMessage);
-
-        console.log("fullConversation: ", fullConversation)
-        let apiResponse;
-
-        if (file) {
-            // Handle sending message with PDF file
-            apiResponse = await sendPdfMessageToApi(fullConversation, file);
-            console.log("apiResponsePdf: ", apiResponse)
-        } else {
-            // Handle sending regular text message
-            apiResponse = await sendTextMessageToApi(fullConversation);
-            console.log("apiResponseText: ", apiResponse)
-        }
-
-        // Remove the loading message
-        setMessages(currentMessages => currentMessages.slice(0, -1));
-
-        if (apiResponse) {
-            const textResponse = apiResponse.response || "Error in sending message";
-            console.log("textResponse: ", textResponse)
-            const formattedTextResponse = formatResponse(textResponse);
-            console.log(formattedTextResponse)
-
-            // Update the messages state with the new response
-            setMessages(currentMessages => [...currentMessages, { type: 'assistant', text: formattedTextResponse }]);
-            console.log("messages: ", messages)
-        } else {
-            // Handle error in response
-            setMessages(currentMessages => [...currentMessages, { type: 'assistant', text: "Error in sending message" }]);
-            console.log("messages: ", messages)
-        }
+    const convertContentToPlainText = (content: string | JSX.Element[]): string => {
+      if (typeof content === 'string') {
+        return content;
+      } else if (Array.isArray(content)) {
+        return content.map(item => {
+          if (typeof item.props.children === 'string') {
+            return item.props.children;
+          } else if (Array.isArray(item.props.children)) {
+            // Providing an explicit type for 'child'
+            return item.props.children.filter((child: React.ReactNode) => typeof child === 'string').join(' ');
+          }
+          return '';
+        }).join(' ');
+      }
+      return ''; // Default fallback
     };
+
+    const handleSendMessage = async (newMessage: Message, file?: File) => {
+      // Convert existing messages content to plain text
+      const updatedMessages = messages.map(msg => ({
+        role: msg.role,
+        content: convertContentToPlainText(msg.content)
+      }));
+  
+      // Convert new message content to plain text and add to messages
+      updatedMessages.push({
+        role: newMessage.role,
+        content: convertContentToPlainText(newMessage.content)
+      });
+  
+      setMessages(currentMessages => [...currentMessages, newMessage]);
+  
+      // Prepare payload for API
+      const payload = {
+        conversation: updatedMessages,
+        conversationId: conversationId
+      };
+  
+      // Log payload for debugging
+      console.log("Sending payload:", payload);
+  
+      let apiResponse;
+      let textResponse;
+  
+      if (file) {
+        apiResponse = await sendPdfMessageToApi(updatedMessages, file);
+      } else {
+        apiResponse = await sendTextMessageToApi(updatedMessages);
+      }
+  
+      // Handle the response from the API
+      if (apiResponse) {
+        textResponse = apiResponse.response || "Error in sending message";
+        const responseMessage: Message = {
+          role: 'assistant',
+          content: formatResponse(textResponse) // Assuming formatResponse returns a string or JSX.Element[]
+        };
+        setMessages(currentMessages => [...currentMessages, responseMessage]);
+      } else {
+        // Handle error in response
+        const errorMessage: Message = {
+          role: 'assistant',
+          content: "Error in sending message"
+        };
+        setMessages(currentMessages => [...currentMessages, errorMessage]);
+      }
+    };
+
 
     return (
         <div className="chat-container">
