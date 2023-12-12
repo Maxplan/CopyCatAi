@@ -1,3 +1,5 @@
+// Purpose: Model for Text Embedding data, used to push data to CosmosDb
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

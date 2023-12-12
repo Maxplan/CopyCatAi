@@ -1,3 +1,5 @@
+// Purpose: Model for similarity search results.
+
 namespace CopyCatAiApi.Models
 {
     public class SearchResult

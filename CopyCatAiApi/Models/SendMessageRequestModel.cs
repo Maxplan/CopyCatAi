@@ -1,4 +1,4 @@
-using static CopyCatAiApi.Services.OpenAIService;
+// Purpose: Model for the request to send a message to the ai.
 
 namespace CopyCatAiApi.Models
 {

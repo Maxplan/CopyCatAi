@@ -1,3 +1,5 @@
+// Purpose: Model for data items.
+
 namespace CopyCatAiApi.Models
 {
     public class DataItem

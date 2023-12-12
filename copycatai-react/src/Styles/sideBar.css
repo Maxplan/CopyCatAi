@@ -36,6 +36,11 @@
     
     color: var(--dark-text);
 }
+h3{
+    position: sticky;
+    top: 0;
+    background-color: var(--dark-primary);
+}
 .sidebar li:hover{
     background-color: var(--dark-text);
     cursor: pointer;

@@ -1,5 +1,5 @@
-using Microsoft.OpenApi.Services;
-using CopyCatAiApi.Models;
+// Purpose: Contains logic for performing similarity search.
+
 using CopyCatAiApi.Interfaces;
 
 namespace CopyCatAiApi.Services

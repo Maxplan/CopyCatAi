@@ -1,3 +1,5 @@
+// Purpose: Model for embedding response.
+
 namespace CopyCatAiApi.Models
 {
     public class EmbeddingResponse

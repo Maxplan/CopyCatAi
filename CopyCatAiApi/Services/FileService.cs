@@ -1,3 +1,5 @@
+// Purpose: Service for file operations. File conversion to text.
+
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 

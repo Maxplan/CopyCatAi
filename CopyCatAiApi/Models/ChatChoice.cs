@@ -1,3 +1,5 @@
+// Purpose: Model for ChatChoice.
+
 namespace CopyCatAiApi.Models
 {
     public class ChatChoice
