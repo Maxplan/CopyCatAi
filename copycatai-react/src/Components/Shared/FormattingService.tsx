@@ -1,7 +1,8 @@
 import React from "react";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { monokai } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 export const formatResponse = (text: string): JSX.Element[] => {
-    // Function to handle copying text to clipboard
     const copyToClipboard = (textToCopy: string) => {
         navigator.clipboard.writeText(textToCopy).then(() => {
             console.log('Copied text to clipboard');
@@ -10,21 +11,20 @@ export const formatResponse = (text: string): JSX.Element[] => {
         });
     };
 
-    // Function to format each segment of text
     const processSegment = (segment: string, isCodeBlock: boolean, language: string) => {
         if (isCodeBlock) {
-            // Wrap the entire code block, including the language, in a div
             formattedElements.push(
                 <div key={`${segment}-code-block`} className="code-block">
                     <div className="code-topbar">
                         <p className="code-language">{language}</p>
                         <button onClick={() => copyToClipboard(segment.trim())} className="copy-button">copy</button>
                     </div>
-                    <pre><code>{segment.trim()}</code></pre>
+                    <SyntaxHighlighter language={language} style={monokai}>
+                        {segment.trim()}
+                    </SyntaxHighlighter>
                 </div>
             );
         } else {
-            // For normal text, split into lines and add with line breaks
             segment.split('\n').forEach((line, lineIndex) => {
                 formattedElements.push(
                     <React.Fragment key={`${segment}-${lineIndex}`}>
