@@ -15,14 +15,16 @@
 .inputBar textarea{
     overflow-y: auto;
     width: 100%;
-    min-height: 1.5em;
-    max-height: 6em;
+    min-height: 4em;
+    max-height: 5em;
     border: none;
     align-items: center;
     font-size: 1em;
     resize: none;
-    background-color: var(--dark-primary);
+    background-color: var(--dark-secondary);
+    border-radius: var(--border-radius-small);
     color: var(--dark-text);
+    padding: 1em;
 }
 
 .inputBar textarea:focus{
@@ -107,15 +109,16 @@ input[type="file"] {
         border-radius: var(--border-radius-small);
 }
 
+
 textarea::-webkit-scrollbar {
     width: 12px;
 }
 
 textarea::-webkit-scrollbar-track {
-    background: var(--dark-primary);
+    background: var(--dark-secondary);
 }
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: var(--dark-secondary);
+    background-color: var(--dark-primary);
     border-radius: var(--border-radius-medium);
 }
