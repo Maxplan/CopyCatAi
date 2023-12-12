@@ -14,13 +14,12 @@
     flex-direction: column;
     width: 100%;
     min-height: 60vh;
-    height: 100%;
     margin-bottom: 1em;
     background-color: var(--dark-primary);
     border-radius: var(--border-radius-medium);
     box-shadow: 0 0 1em var(--box-shadow-color);
     top: auto;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .code-block{
@@ -70,27 +69,26 @@ pre{
     background-color: var(--highlighter-color);
     color: #fdfdfd;
     align-self: flex-end;
-    min-height: 2em;
     padding: 0.5em 1em;
     border-radius: var(--border-radius-small);
     margin: 1em;
     width: fit-content;
     max-width: 80%;
     box-shadow: 0 0 .5em var(--box-shadow-color);
-
+    height: fit-content;
 }
 .ai-message{
     background-color: #d8d8d8;
     color: #000000;
     align-self: flex-start;
-    min-height: 2em;
+    height: fit-content;
     padding: 0.5em 1em;
     border-radius: var(--border-radius-small);
     margin: 1em;
     width: fit-content;
     max-width: 80%;
     box-shadow: 0 0 .5em var(--box-shadow-color);
-
+    height: fit-content;
 }
 
 

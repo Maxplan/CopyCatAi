@@ -92,6 +92,7 @@ namespace CopyCatAiApi.Controllers
         }
 
         // Send a message to OpenAI with a PDF file
+        // Send a message to OpenAI with a PDF file
         [HttpPost("SendPdfMessage")]
         public async Task<IActionResult> SendPdfMessage([FromForm] SendMessageRequestModel request, [FromForm] IFormFile pdfFile)
         {
@@ -114,8 +115,6 @@ namespace CopyCatAiApi.Controllers
                 await _conversationService.SaveConversationToDatabase(newConversation);
                 // Set the conversation ID to the new conversation's ID
                 request.ConversationId = newConversation.ConversationId;
-                request.Conversation = new List<ChatMessage>();
-                request.Conversation.Add(new ChatMessage { Role = "user", Content = request.Conversation.ToString()! });
             }
 
             // Check if conversation has at least one message
@@ -125,7 +124,7 @@ namespace CopyCatAiApi.Controllers
             }
 
             // Extract the last user message from the conversation
-            var lastUserMessage = request.Conversation.LastOrDefault(msg => msg.Role == "user")?.Content;
+            var lastUserMessage = request.Conversation.LastOrDefault(m => m.Role == "user")?.Content;
             if (string.IsNullOrEmpty(lastUserMessage))
             {
                 return BadRequest("No user message found in the conversation.");
@@ -144,7 +143,7 @@ namespace CopyCatAiApi.Controllers
             var concatenatedText = string.Join(" ", similarTextBlocks.Select(block => block.Text));
 
             // Send concatenated text and user prompt to OpenAI
-            var openAIRequest = $"PDF: {concatenatedText} \n Prompt: {lastUserMessage}";
+            var openAIRequest = $"Prompt: {lastUserMessage} \n PDF: {concatenatedText}";
             var responseContent = await _openAIService.SendMessageToOpenAI(new List<ChatMessage> { new ChatMessage { Role = "user", Content = openAIRequest } });
 
             // Save Request and Response to Database
@@ -168,6 +167,7 @@ namespace CopyCatAiApi.Controllers
             // Return the response from OpenAI
             return Ok(new { Response = responseContent, ConversationId = request.ConversationId });
         }
+
 
 
 

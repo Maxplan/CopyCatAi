@@ -109,18 +109,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
     };
 
     const sendPdfMessageToApi = async (conversation: Message[], file: File) => {
-        try {
-            const formData = new FormData();
-            formData.append('conversation', JSON.stringify({ conversation, conversationId }));
-            formData.append('pdfFile', file);
+    try {
+        const formData = new FormData();
+        formData.append('pdfFile', file);
+        formData.append('conversationId', conversationId!.toString());
 
-            const response = await fetch('http://localhost:5119/api/v1/Interaction/SendPdfMessage', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                },
-                body: formData
-            });
+        conversation.forEach((msg, index) => {
+            formData.append(`conversation[${index}][role]`, msg.role);
+            formData.append(`conversation[${index}][content]`, convertContentToPlainText(msg.content));
+        });
+
+        // Alternative debugging: Log FormData contents
+        formData.forEach((value, key) => {
+            console.log(`${key}: ${value}`);
+        });
+
+        const response = await fetch('http://localhost:5119/api/v1/Interaction/SendPdfMessage', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: formData
+        });
             
             const data = await response.json();
             return data;

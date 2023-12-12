@@ -106,29 +106,5 @@ namespace CopyCatAiApi.Services
         }
 
         // Classes for deserializing the response from OpenAI
-        public class EmbeddingResponse
-        {
-            public List<DataItem>? Data { get; set; }
-        }
-
-        public class DataItem
-        {
-            public List<float>? Embedding { get; set; }
-        }
-        public class OpenAIResponse
-        {
-            public List<ChatChoice>? Choices { get; set; }
-        }
-
-        public class ChatChoice
-        {
-            public ChatMessage? Message { get; set; }
-        }
-
-        public class ChatMessage
-        {
-            public string? Role { get; set; }
-            public string? Content { get; set; }
-        }
     }
 }

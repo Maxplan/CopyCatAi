@@ -27,7 +27,7 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage }) => {
                 textAreaRef.current.style.height = '1.5em';
             }
         }
-    };
+    }; 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInput(e.target.value);
