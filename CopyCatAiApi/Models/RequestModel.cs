@@ -11,6 +11,7 @@ namespace CopyCatAiApi.Models
         [Key]
         public int RequestId { get; set; } // Primary key for the request table
         public string Request { get; set; } = ""; // The request from the user
+        public string RequestPrompt { get; set; } = "";
         public DateTime TimeStamp { get; set; } // The time the request was sent
         public string? PreferenceProfile { get; set; } // The preference profile of the user
         public string Model { get; set; } = "gpt-3.5-turbo"; // The model of the user

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CopyCatAiApi.Migrations
 {
     [DbContext(typeof(CopyCatAiContext))]
-    [Migration("20231115091118_CleanUp")]
-    partial class CleanUp
+    [Migration("20231213151618_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,9 @@ namespace CopyCatAiApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PreferenceProfile")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
@@ -57,6 +60,10 @@ namespace CopyCatAiApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Request")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RequestPrompt")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

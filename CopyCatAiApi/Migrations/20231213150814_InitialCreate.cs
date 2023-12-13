@@ -165,6 +165,8 @@ namespace CopyCatAiApi.Migrations
                 {
                     ConversationId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Timestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    PreferenceProfile = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -207,18 +209,14 @@ namespace CopyCatAiApi.Migrations
                     RequestId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Request = table.Column<string>(type: "TEXT", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true),
                     TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    PreferenceProfile = table.Column<string>(type: "TEXT", nullable: true),
+                    Model = table.Column<string>(type: "TEXT", nullable: false),
                     ConversationId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Requests", x => x.RequestId);
-                    table.ForeignKey(
-                        name: "FK_Requests_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Requests_Conversations_ConversationId",
                         column: x => x.ConversationId,
@@ -235,7 +233,7 @@ namespace CopyCatAiApi.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Response = table.Column<string>(type: "TEXT", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UserRating = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserRating = table.Column<bool>(type: "INTEGER", nullable: true),
                     ConversationId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -295,11 +293,6 @@ namespace CopyCatAiApi.Migrations
                 name: "IX_Requests_ConversationId",
                 table: "Requests",
                 column: "ConversationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Requests_UserId",
-                table: "Requests",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Responses_ConversationId",

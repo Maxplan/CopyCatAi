@@ -73,7 +73,7 @@ namespace CopyCatAiApi.Controllers
             {
                 Request = lastRequest,
                 ConversationId = request.ConversationId.Value,
-                TimeStamp = DateTime.Now
+                TimeStamp = DateTime.Now,
             };
             // Get the response from OpenAI
             var responseContent = await _openAIService.SendMessageToOpenAI(request.Conversation!);
@@ -151,7 +151,8 @@ namespace CopyCatAiApi.Controllers
             {
                 Request = openAIRequest,
                 ConversationId = request.ConversationId.Value,
-                TimeStamp = DateTime.Now
+                TimeStamp = DateTime.Now,
+                RequestPrompt = lastUserMessage
             };
 
             var responseModel = new ResponseModel()

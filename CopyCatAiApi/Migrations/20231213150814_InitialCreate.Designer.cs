@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CopyCatAiApi.Migrations
 {
     [DbContext(typeof(CopyCatAiContext))]
-    [Migration("20231115120817_AddedTimeStampConversation")]
-    partial class AddedTimeStampConversation
+    [Migration("20231213150814_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
