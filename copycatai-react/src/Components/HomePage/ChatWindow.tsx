@@ -40,49 +40,52 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
     }
 
     useEffect(() => {
-        let isMounted = true;
+      let isMounted = true;
+      
+      const loadSelectedConversation = () => {
+          if (selectedConversation) {
+              setConversationId(selectedConversation.conversationId);
+          
+              const combinedMessages = interleaveArrays(
+                  selectedConversation.requests,
+                  selectedConversation.responses
+              );
+              
+              console.log("Loaded Conversation: ", combinedMessages);
+            setMessages(combinedMessages);
+          } else {
+            setMessages([])
+            setConversationId(null);
+          }
+      };
+    
+      const startNewConversation = async () => {
+          if (!selectedConversation && isMounted) {
+              const response = await fetch('http://localhost:5119/api/v1/Interaction/StartConversation', {
+                  method: 'POST',
+                  headers: {
+                      'Authorization': `Bearer ${authToken}`
+                  }
+              });
+            
+              if (response.ok) {
+                  const data = await response.json();
+                  setConversationId(data.conversationId);
+                  setMessages([]); // Clear messages for a new conversation
+                  console.log("Start new conversation: ", data.conversationId)
+              }
+          }
+      };
+    
+      if (selectedConversation) {
+          loadSelectedConversation();
+      } else {
+          startNewConversation();
+      }
+    
+      return () => { isMounted = false };
+  }, [selectedConversation, authToken]);
 
-        const loadSelectedConversation = () => {
-            if (selectedConversation) {
-                setConversationId(selectedConversation.conversationId);
-
-                // Use the interleaveArrays function to combine requests and responses
-                const combinedMessages = interleaveArrays(
-                    selectedConversation.requests,
-                    selectedConversation.responses
-                );
-
-                console.log("Loaded Conversation: ", combinedMessages);
-                setMessages(combinedMessages);
-            }
-        };
-
-        const startNewConversation = async () => {
-            if (!selectedConversation && isMounted) {
-                const response = await fetch('http://localhost:5119/api/v1/Interaction/StartConversation', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setConversationId(data.conversationId);
-                    console.log("Start new conversation: ", data.conversationId)
-                }
-            }
-        };
-
-        // Call the appropriate function based on whether a conversation is selected
-        if (selectedConversation) {
-            loadSelectedConversation();
-        } else {
-            startNewConversation();
-        }
-
-        return () => { isMounted = false };
-    }, [selectedConversation, authToken]);
 
     const sendTextMessageToApi = async (conversation: Message[]) => {
         try {

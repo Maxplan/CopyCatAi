@@ -15,8 +15,7 @@
     align-self: center;
     color: var(--dark-text);
     font-size: 1.5em;
-    width: 100%;   
-    box-shadow: 0 0 1em var(--box-shadow-color);
+    width: 100%;
     text-align: center;
     
 }
@@ -36,16 +35,43 @@
     
     color: var(--dark-text);
 }
-h3{
+.sidebar-header{
     position: sticky;
     top: 0;
     background-color: var(--dark-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 0 1em var(--box-shadow-color);
 }
+.new-conversation-btn{
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    margin: 0.5em 0.5em 0 0;
+    border-radius: var(--border-radius-small);
+    transition: all 0.2s ease-in-out;
+
+}
+.new-conversation-icon{
+    height: 1em;
+    width: 1em;
+    color: var(--dark-text);
+    transition: all 0.2s ease-in-out;
+    filter: invert(80%) sepia(1%) saturate(0%) hue-rotate(99deg) brightness(95%) contrast(92%);
+}
+.new-conversation-icon:hover{
+    filter: invert(48%) sepia(41%) saturate(6106%) hue-rotate(197deg) brightness(103%) contrast(101%);
+    cursor: pointer;
+}
+
 .sidebar li:hover{
     background-color: var(--dark-text);
     cursor: pointer;
     color: var(--dark-secondary);
 }
+
+
 .sidebar::-webkit-scrollbar {
     width: 12px;
 }

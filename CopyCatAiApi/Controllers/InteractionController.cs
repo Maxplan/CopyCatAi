@@ -336,5 +336,15 @@ namespace CopyCatAiApi.Controllers
 
             return Ok(results);
         }
+        // Test Methods 
+
+        [HttpGet("test-sql-string")]
+        public async Task<IActionResult> TestSqlString()
+        {
+            string filePath = "./Data/TestFiles/testsql.sql";
+            string sqlString = await System.IO.File.ReadAllTextAsync(filePath);
+
+            return Ok(sqlString);
+        }
     }
 }

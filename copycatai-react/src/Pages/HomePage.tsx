@@ -27,6 +27,10 @@ const HomePage: React.FC = () => {
     fetchUserId();
   }, [authToken]);
 
+  const handleStartNewConversation = () => {
+    setSelectedConversation(null);
+  }
+
   const handleConversationSelect = async (conversationId: number) => {
     if (authToken) { // Check if authToken is not empty
       const response = await fetch(`http://localhost:5119/api/v1/Interaction/GetConversationDetails?conversationId=${conversationId}`, {
@@ -45,7 +49,7 @@ const HomePage: React.FC = () => {
     <div className="app-container">
       {authToken && userId && (
         <>
-          <Sidebar authToken={authToken} userId={userId} onConversationSelect={handleConversationSelect} />
+          <Sidebar authToken={authToken} userId={userId} onConversationSelect={handleConversationSelect} onStartNewConversation={handleStartNewConversation} />
           <ChatWindow selectedConversation={selectedConversation} />
         </>
       )}

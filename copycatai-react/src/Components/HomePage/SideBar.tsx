@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Conversation from "../Shared/ConversationTypes";
+import newConversationIcon from "../../imgs/new-conversation.png";
 
 import "../../Styles/sideBar.css";
 
@@ -9,6 +10,7 @@ interface SidebarProps {
     authToken: string;
     userId: string;
     onConversationSelect: (conversationId: number) => Promise<void>;
+    onStartNewConversation: () => void;
 }
 
 const truncateString = (str: string, num: number) => {
@@ -18,7 +20,7 @@ const truncateString = (str: string, num: number) => {
     return str.slice(0, num) + '...'
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ authToken, userId, onConversationSelect }) => {
+const Sidebar: React.FC<SidebarProps> = ({ authToken, userId, onConversationSelect, onStartNewConversation }) => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
     useEffect(() => {
@@ -42,7 +44,10 @@ const Sidebar: React.FC<SidebarProps> = ({ authToken, userId, onConversationSele
 
     return (
         <div className="sidebar">
-            <h3>History</h3>
+            <div className="sidebar-header">
+                <h3>History</h3>
+                <button className="new-conversation-btn" onClick={onStartNewConversation}><img className="new-conversation-icon" src={newConversationIcon} alt="" /></button>
+            </div>
             <ul>
                 {conversations.map((conversation, index) => (
                     <li key={index} onClick={() => onConversationSelect(conversation.conversationId)}>
