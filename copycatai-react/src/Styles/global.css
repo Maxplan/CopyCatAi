@@ -1,31 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap");
 
-:root{
-    --light-primary: #c6ccb2;
-    --light-secondary: #093824;
-    --light-text: #485544;
-    --dark-primary: #4e4e4e;
-    --dark-secondary: #3b3b3b;
-    --dark-text: #bebebe;
-    --box-shadow-color: #181818;
-    --highlighter-color: #218aff;
-    --border-radius-large: 1.5em;
-    --border-radius-medium: 1em;
-    --border-radius-small: 0.5em;
+:root {
+  --light-primary: #c6ccb2;
+  --light-secondary: #093824;
+  --light-text: #485544;
+  --dark-primary: #4e4e4e;
+  --dark-secondary: #3b3b3b;
+  --dark-text: #bebebe;
+  --box-shadow-color: #181818;
+  --highlighter-color: #218aff;
+  --warning-color: #ff6f69;
+  --filter-warning-color: invert(72%) sepia(29%) saturate(7469%)
+    hue-rotate(318deg) brightness(101%) contrast(99%);
+  --filter-highlighter-color: invert(48%) sepia(41%) saturate(6106%)
+    hue-rotate(197deg) brightness(103%) contrast(101%);
+  --filter-dark-text: invert(80%) sepia(1%) saturate(0%) hue-rotate(99deg)
+    brightness(95%) contrast(92%);
+  --filter-dark-secondary: invert(17%) sepia(0%) saturate(1652%)
+    hue-rotate(151deg) brightness(101%) contrast(83%);
+  --border-radius-large: 1.5em;
+  --border-radius-medium: 1em;
+  --border-radius-small: 0.5em;
 }
 
-
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-#root{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    background-color: var(--dark-secondary);
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--dark-secondary);
 }

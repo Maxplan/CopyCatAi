@@ -1,120 +1,125 @@
 .inputBar {
-    width: 100%;
-    height: fit-content;
-    min-height: 8vh;
-    max-height: fit-content;
-    display: flex;
-    padding: .5em 1em;
-    box-shadow: 0 0 1em var(--box-shadow-color);
-    border-radius: var(--border-radius-medium);
-    align-items: center;
-    align-self: flex-end;
-    background-color: var(--dark-primary);
+  width: 100%;
+  height: fit-content;
+  min-height: 8vh;
+  max-height: fit-content;
+  display: flex;
+  padding: 0.5em 1em;
+  box-shadow: 0 0 1em var(--box-shadow-color);
+  border-radius: var(--border-radius-medium);
+  align-items: center;
+  align-self: flex-end;
+  background-color: var(--dark-primary);
 }
 
-.inputBar textarea{
-    overflow-y: auto;
-    width: 100%;
-    min-height: 4em;
-    max-height: 5em;
-    border: none;
-    align-items: center;
-    font-size: 1em;
-    resize: none;
-    background-color: var(--dark-secondary);
-    border-radius: var(--border-radius-small);
-    color: var(--dark-text);
-    padding: 1em;
+.inputBar textarea {
+  overflow-y: auto;
+  width: 100%;
+  min-height: 4em;
+  max-height: 5em;
+  border: none;
+  align-items: center;
+  font-size: 1em;
+  resize: none;
+  background-color: var(--dark-secondary);
+  border-radius: var(--border-radius-small);
+  color: var(--dark-text);
+  padding: 1em;
 }
 
-.inputBar textarea:focus{
-    outline: none;
+.inputBar textarea:focus {
+  outline: none;
 }
 
-.inputBar button{
-    width: 4em;
-    height: 4em;
-    border: none;
-    border-radius: var(--border-radius-medium);
-    margin: 0 0 0 1em;
-    transition: all 0.15s ease-in-out;
-    box-shadow: 0 0 .5em var(--box-shadow-color);
-    background-color: var(--dark-text);
-    padding: 0.5em;
+.inputBar button {
+  width: 4em;
+  height: 4em;
+  border: none;
+  border-radius: var(--border-radius-medium);
+  margin: 0 0 0 1em;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 0 0.5em var(--box-shadow-color);
+  background-color: var(--dark-text);
+  padding: 0.5em;
 }
 
-.inputBar button:hover{
-    cursor: pointer;
-    background-color: var(--highlighter-color);
+.inputBar button:hover {
+  cursor: pointer;
+  /*background-color: var(--warning-color);*/
+  transform: scale(1.15);
 }
 
 input[type="file"] {
-    display: none;
+  display: none;
 }
 
-.custom-file-upload{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 2em;
-    height: 2em;
-    border: none;
-    margin: 0 1em 0 0.5em;
-    transition: all 0.15s ease-in-out;
-    cursor: pointer;
+.custom-file-upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+  border: none;
+  margin: 0 1em 0 0.5em;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 
 .custom-file-upload-attached {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 2em;
-    height: 2em;
-    border: none;
-    margin: 0 1em 0 0.5em;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+  border: none;
+  margin: 0 1em 0 0.5em;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
 }
 
-.custom-file-upload img{
-    width: 80%;
-    height: 80%;
-    object-fit: cover;
+.custom-file-upload-attached:hover {
+  background-color: rgb(255, 86, 20); /*var(--warning-color);*/
+}
+
+.custom-file-upload img {
+  width: 80%;
+  height: 80%;
+  object-fit: cover;
 }
 
 .custom-file-upload-attached img {
-    width: 80%;
-    height: 80%;
-    object-fit: cover;
+  width: 80%;
+  height: 80%;
+  object-fit: cover;
 }
 
-.send-message-button img{
-    width: 70%;
-    height: 70%;
-    object-fit: cover;
+.send-message-button img {
+  width: 70%;
+  height: 70%;
+  object-fit: cover;
 }
 
-
-.custom-file-upload:hover{
-    filter: invert(48%) sepia(41%) saturate(6106%) hue-rotate(197deg) brightness(103%) contrast(101%);
+.custom-file-upload:hover {
+  filter: var(--filter-highlighter-color);
+  transform: scale(1.3);
 }
 
-.custom-file-upload-attached{
-    background-color: var(--highlighter-color);
-    box-shadow: 0 0 .5em var(--dark-secondary);
-        border-radius: var(--border-radius-small);
+.custom-file-upload-attached {
+  background-color: var(--warning-color);
+  box-shadow: 0 0 0.5em var(--dark-secondary);
+  border-radius: var(--border-radius-small);
+  transform: scale(1.3);
 }
-
 
 textarea::-webkit-scrollbar {
-    width: 12px;
+  width: 12px;
 }
 
 textarea::-webkit-scrollbar-track {
-    background: var(--dark-secondary);
+  background: var(--dark-secondary);
 }
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: var(--dark-primary);
-    border-radius: var(--border-radius-medium);
+  background-color: var(--dark-primary);
+  border-radius: var(--border-radius-medium);
 }
