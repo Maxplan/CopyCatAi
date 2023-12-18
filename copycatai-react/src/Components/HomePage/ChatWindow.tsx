@@ -9,6 +9,7 @@ import Conversation from '../Shared/ConversationTypes';
 interface Message {
   role: 'user' | 'assistant';
   content: string | JSX.Element[];
+  responseId?: number;
 }
 
 interface ChatWindowProps {
@@ -21,7 +22,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
 
     const authToken = localStorage.getItem('token');
     
-    const interleaveArrays = (arr1: string[], arr2: string[]): Message[] => {
+    const interleaveArrays = (arr1: string[], arr2: string[], responseIds: number[]): Message[] => {
         const result: Message[] = [];
         const length = Math.max(arr1.length, arr2.length);
         
@@ -31,13 +32,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
                 result.push({ role: 'user', content: formattedRequest });
             }
             if (i < arr2.length) {
-                const formattedResponse = formatResponse(arr2[i]);
-                result.push({ role: 'assistant', content: formattedResponse });
+              const formattedResponse = formatResponse(arr2[i]);
+              const responseId = responseIds[i];
+                result.push({ role: 'assistant', content: formattedResponse, responseId });
             }
     }
 
     return result;
-    }
+  }
+  
+  const handleResendRequest = async (request: string) => {
+    const message: Message = { role: 'user', content: request };
+    await handleSendMessage(message);
+  }
 
     useEffect(() => {
       let isMounted = true;
@@ -45,10 +52,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
       const loadSelectedConversation = () => {
           if (selectedConversation) {
               setConversationId(selectedConversation.conversationId);
-          
+
+              const responseIds = selectedConversation.responses.map(response => response.responseId);
+            
               const combinedMessages = interleaveArrays(
-                  selectedConversation.requests,
-                  selectedConversation.responses
+                selectedConversation.requests,
+                selectedConversation.responses.map(response => response.response),
+                responseIds
               );
               
               console.log("Loaded Conversation: ", combinedMessages);
@@ -214,7 +224,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
 
     return (
         <div className="chat-container">
-            <MessageList messages={messages} />
+            <MessageList messages={messages} onResendRequest={handleResendRequest} />
             <InputBar onSendMessage={handleSendMessage} />
         </div>
     );

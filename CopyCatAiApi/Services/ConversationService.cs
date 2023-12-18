@@ -23,7 +23,15 @@ namespace CopyCatAiApi.Services
 
         public async Task SaveResponseToDatabase(ResponseModel response)
         {
-            await _context.Responses.AddAsync(response);
+            var existingResponse = await _context.Responses.FindAsync(response.ResponseId);
+            if (existingResponse != null)
+            {
+                _context.Entry(existingResponse).CurrentValues.SetValues(response);
+            }
+            else
+            {
+                await _context.Responses.AddAsync(response);
+            }
             await _context.SaveChangesAsync();
         }
 

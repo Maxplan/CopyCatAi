@@ -20,11 +20,11 @@
 }
 a {
   text-decoration: none;
-  color: var(--dark-text);
+  color: var(--warning-color);
   transition: all 0.15s ease-in-out;
 }
 a:hover {
-  color: var(--warning-color);
+  color: var(--warning-color-hover);
 }
 
 .hamburger-menu {
@@ -65,14 +65,14 @@ a:hover {
   display: block;
   width: 25px;
   height: 3px;
-  background-color: var(--dark-text);
+  background-color: var(--warning-color);
   margin: 5px 0;
   border-radius: 1px;
   transition: all 0.15s ease-in-out;
 }
 
 .hamburger-menu:hover span {
-  background-color: var(--warning-color);
+  background-color: var(--warning-color-hover);
   cursor: pointer;
 }
 

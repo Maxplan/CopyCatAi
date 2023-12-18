@@ -7,7 +7,7 @@ form {
   border: none;
   border-radius: var(--border-radius-medium);
   box-shadow: 0 0 1em var(--box-shadow-color);
-  background-color: var(--dark-primary);
+  background-color: var(--dark-secondary);
 }
 
 /* Style for form labels and inputs */
@@ -41,7 +41,7 @@ form button {
   border: none;
   border-radius: var(--border-radius-medium);
   background-color: var(--warning-color);
-  color: var(--dark-secondary);
+  color: /*var(--dark-text)*/ white;
   cursor: pointer;
   font-size: 16px;
   margin-top: 1em;
@@ -49,14 +49,14 @@ form button {
 }
 
 form button:hover {
-  background-color: var(--dark-text);
-  color: var(--dark-secondary);
+  background-color: var(--warning-color-hover);
+  color: white;
 }
 
 .reg-btn,
 .reg-btn a {
   background-color: var(--dark-secondary);
-  color: var(--dark-text);
+  color: white;
 }
 
 .reg-btn:hover,
@@ -69,6 +69,22 @@ form button:hover {
 .error {
   color: red;
   margin-top: 10px;
+}
+
+.authform-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--dark-primary);
+  padding: 1em 2em;
+  margin-top: 5em;
+  border-radius: var(--border-radius-medium);
+  box-shadow: 0 0 1em var(--box-shadow-color);
+}
+.sign-in-title {
+  color: var(--warning-color);
+  font-size: 2em;
 }
 
 /* Additional styles can be added for transitions, hover effects, and media queries for responsiveness */

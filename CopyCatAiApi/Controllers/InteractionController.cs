@@ -9,6 +9,7 @@ using CopyCatAiApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson.IO;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Ocsp;
 using static CopyCatAiApi.Services.OpenAIService;
 
@@ -232,7 +233,11 @@ namespace CopyCatAiApi.Controllers
             {
                 ConversationId = conversation.ConversationId,
                 Requests = requests.Select(r => r.Request).ToList(),
-                Responses = responses.Select(r => r.Response).ToList(),
+                Responses = responses.Select(r => new ResponseModel()
+                {
+                    Response = r.Response,
+                    ResponseId = r.ResponseId  // Ensure this is included
+                }).ToList(),
                 Timestamp = requests.First().TimeStamp
             };
 
@@ -240,7 +245,7 @@ namespace CopyCatAiApi.Controllers
         }
 
         [HttpPost("RateResponse")]
-        public async Task<IActionResult> RateResponse(int responseId, bool rating)
+        public async Task<IActionResult> RateResponse([FromBody] RateResponseModel rateResponse)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -249,19 +254,20 @@ namespace CopyCatAiApi.Controllers
                 return Unauthorized();
             }
 
-            var response = await _conversationService.GetResponseById(responseId);
+            var response = await _conversationService.GetResponseById(rateResponse.ResponseId);
 
             if (response == null)
             {
-                return NotFound();
+                return NotFound("Response not found.");
             }
 
-            response.UserRating = rating;
+            response.UserRating = rateResponse.Rating;
 
             await _conversationService.SaveResponseToDatabase(response);
 
-            return Ok();
+            return Ok("Rating saved successfully.");
         }
+
 
         [HttpGet("GetConversationByUserId")]
         public async Task<IActionResult> GetConversationByUserId()
@@ -290,7 +296,12 @@ namespace CopyCatAiApi.Controllers
                 {
                     ConversationId = convo.ConversationId,
                     Requests = requests.Select(r => r.Request).ToList(),
-                    Responses = responses.Select(r => r.Response).ToList(),
+                    Responses = responses.Select(r => new ResponseModel
+                    {
+                        ResponseId = r.ResponseId,
+                        Response = r.Response,
+                        // other properties as needed
+                    }).ToList(),
                     Timestamp = convo.Timestamp
                 };
                 conversationsReqRes.Add(DTO);

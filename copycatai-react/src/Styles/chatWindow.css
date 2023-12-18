@@ -88,6 +88,9 @@ code {
   width: 100%;
   margin: 0.5em 0;
 }
+.rating-bar :nth-child(1){
+  margin-right: auto;
+}
 .rating-bar button {
   width: 1.5em;
   height: 1.5em;
@@ -102,7 +105,7 @@ code {
   cursor: pointer;
   filter: var(--filter-highlighter-color);
 }
-.rating-bar button:nth-child(2):hover {
+.rating-bar button:nth-child(3):hover {
   cursor: pointer;
   filter: var(--filter-warning-color);
 }
@@ -110,8 +113,13 @@ code {
   filter: var(--filter-highlighter-color);
 }
 
-.rating-bar button:nth-child(2).selected {
+.rating-bar button:nth-child(3).selected {
   filter: var(--filter-warning-color);
+}
+
+.rating-bar img {
+  height: 1.5em;
+  width: 1.5em;
 }
 
 .messageList::-webkit-scrollbar {

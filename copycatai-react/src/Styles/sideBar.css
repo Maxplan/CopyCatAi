@@ -13,8 +13,9 @@
 .sidebar h3 {
   padding: 0.25em 0;
   align-self: center;
-  color: var(--dark-text);
+  color: var(--warning-color);
   font-size: 1.5em;
+  font-weight: 400;
   width: 100%;
   text-align: center;
 }
