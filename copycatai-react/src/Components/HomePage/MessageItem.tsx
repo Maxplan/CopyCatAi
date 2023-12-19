@@ -52,7 +52,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, originalUserRequest,
     }
   };
 
-  if (message.role === 'assistant' && message.responseId) {
+  if (message.role === 'assistant') {
     // AI message: wrapped in a div with additional rating buttons
     return (
       <div className="response-div">

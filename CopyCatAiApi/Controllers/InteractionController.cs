@@ -164,6 +164,9 @@ namespace CopyCatAiApi.Controllers
             };
 
             await _conversationService.SaveRequestToDatabase(requestModel);
+            var conversation = await _conversationService.GetConversationById(request.ConversationId.Value);
+            var requestId = conversation.RequestList.Last().RequestId;
+            await _conversationService.SavePromptToDatabase(requestId, lastUserMessage);
             await _conversationService.SaveResponseToDatabase(responseModel);
 
             // Return the response from OpenAI

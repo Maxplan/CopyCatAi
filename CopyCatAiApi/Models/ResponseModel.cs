@@ -11,7 +11,7 @@ namespace CopyCatAiApi.Models
         public int ResponseId { get; set; } // Primary key for the response table
         public string Response { get; set; } = ""; // The response from the AI
         public DateTime TimeStamp { get; set; } // The time the response was sent
-        public bool? UserRating { get; set; } // The vote of the user, 1 default, 0 dislike, 2 like
+        public bool? UserRating { get; set; } // The vote of the user, 1 like, 2 dislike
 
 
         //Navigation Properties

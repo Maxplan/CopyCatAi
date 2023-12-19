@@ -35,6 +35,16 @@ namespace CopyCatAiApi.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task SavePromptToDatabase(int requestId, string prompt)
+        {
+            var request = await _context.Requests.FindAsync(requestId);
+            if (request == null)
+            {
+                throw new Exception("No request found with this id.");
+            }
+            request.RequestPrompt = prompt;
+            await _context.SaveChangesAsync();
+        }
         public async Task SaveConversationToDatabase(ConversationModel conversation)
         {
             await _context.Conversations.AddAsync(conversation);
