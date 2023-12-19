@@ -43,20 +43,26 @@ const Sidebar: React.FC<SidebarProps> = ({ authToken, userId, onConversationSele
     }, [userId, authToken]);
 
     return (
-        <div className="sidebar">
-            <div className="sidebar-header">
-                <h3>History</h3>
-                <button className="new-conversation-btn" onClick={onStartNewConversation}><img className="new-conversation-icon" src={newConversationIcon} alt="" /></button>
-            </div>
-            <ul>
-                {conversations.map((conversation, index) => (
-                    <li key={index} onClick={() => onConversationSelect(conversation.conversationId)}>
-                        {truncateString(conversation.requests[0], 15)}
-                    </li>
-                ))}
-            </ul>
+    <div className="sidebar">
+        <div className="sidebar-header">
+            <h3>History</h3>
+            <button className="new-conversation-btn" onClick={onStartNewConversation}>
+                <img className="new-conversation-icon" src={newConversationIcon} alt="" />
+            </button>
         </div>
-    );
+        <ul>
+            {conversations.map((conversation, index) => (
+                <li key={index} onClick={() => onConversationSelect(conversation.conversationId)}>
+                    {/* Check if RequestPrompt is available, else show Request */}
+                    {truncateString(
+                        conversation.requestPrompts[0] ? conversation.requestPrompts[0] : conversation.requests[0],
+                        15
+                    )}
+                </li>
+            ))}
+        </ul>
+    </div>
+);
 };
 
 export default Sidebar;

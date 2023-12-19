@@ -299,6 +299,7 @@ namespace CopyCatAiApi.Controllers
                 {
                     ConversationId = convo.ConversationId,
                     Requests = requests.Select(r => r.Request).ToList(),
+                    RequestPrompts = requests.Select(r => r.RequestPrompt).ToList(),
                     Responses = responses.Select(r => new ResponseModel
                     {
                         ResponseId = r.ResponseId,
