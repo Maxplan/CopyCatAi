@@ -27,7 +27,7 @@ To start the app you need to start both the backend API and the React app. You w
 
 ```bash
 # Example command line instructions
-git clone [repository-url]
+git clone https://gitlab.com/lia-1/CopyCatAi.git
 cd copycatai
 cd CopyCatAIApi
 dotnet run
