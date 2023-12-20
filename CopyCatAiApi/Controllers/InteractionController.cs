@@ -225,6 +225,7 @@ namespace CopyCatAiApi.Controllers
 
             var requests = await _conversationService.GetRequestsByConversationId(conversationId);
             var responses = await _conversationService.GetResponsesByConversationId(conversationId);
+            var requestPrompts = await _conversationService.GetRequestPromptsByConversationId(conversationId);
 
             if (!requests.Any() && !responses.Any())
             {
@@ -241,6 +242,7 @@ namespace CopyCatAiApi.Controllers
                     Response = r.Response,
                     ResponseId = r.ResponseId  // Ensure this is included
                 }).ToList(),
+                RequestPrompts = requestPrompts,
                 Timestamp = requests.First().TimeStamp
             };
 

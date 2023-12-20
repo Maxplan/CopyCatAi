@@ -10,6 +10,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string | JSX.Element[];
   responseId?: number;
+  originalUserRequest?: string;
 }
 
 interface ChatWindowProps {
@@ -22,14 +23,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
 
     const authToken = localStorage.getItem('token');
     
-    const interleaveArrays = (arr1: string[], arr2: string[], responseIds: number[]): Message[] => {
+    const interleaveArrays = (arr1: string[], arr2: string[], responseIds: number[], requestPrompts: string[]): Message[] => {
         const result: Message[] = [];
         const length = Math.max(arr1.length, arr2.length);
         
         for (let i = 0; i < length; i++) {
-            if (i < arr1.length) {
-                const formattedRequest = formatResponse(arr1[i]);
-                result.push({ role: 'user', content: formattedRequest });
+          if (i < arr1.length) {
+              const responseContent = requestPrompts[i] || arr1[i];
+              const formattedRequest = formatResponse(responseContent);
+                result.push({ role: 'user', content: formattedRequest});
             }
             if (i < arr2.length) {
               const formattedResponse = formatResponse(arr2[i]);
@@ -58,7 +60,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
               const combinedMessages = interleaveArrays(
                 selectedConversation.requests,
                 selectedConversation.responses.map(response => response.response),
-                responseIds
+                responseIds,
+                selectedConversation.requestPrompts
               );
               
               console.log("Loaded Conversation: ", combinedMessages);

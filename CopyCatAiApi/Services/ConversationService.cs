@@ -72,6 +72,16 @@ namespace CopyCatAiApi.Services
             return result;
         }
 
+        public async Task<List<string>> GetRequestPromptsByConversationId(int conversationId)
+        {
+            var result = await _context.Requests
+                .Where(r => r.ConversationId == conversationId)
+                .OrderBy(r => r.TimeStamp)
+                .Select(r => r.RequestPrompt)
+                .ToListAsync() ?? throw new Exception("No requests found for this conversation.");
+
+            return result;
+        }
         public async Task<List<ResponseModel>> GetResponsesByConversationId(int conversationId)
         {
             var result = await _context.Responses

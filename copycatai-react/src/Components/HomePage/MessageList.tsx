@@ -6,6 +6,7 @@ interface MessageListProps {
       role: "user" | "assistant";
       content: string | JSX.Element[];
       responseId?: number;
+      originalUserRequest?: string;
   }[],
   onResendRequest: (request: string) => void;
 }
@@ -15,7 +16,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, onResendRequest }) 
   return (
     <div className="messageList">
         {messages.map((msg, index) => {
-            return <MessageItem key={index} message={msg} onResendRequest={onResendRequest}/>;
+          return <MessageItem key={index} message={msg} onResendRequest={onResendRequest} originalUserRequest={ msg.originalUserRequest} />;
         })}
     </div>
   );

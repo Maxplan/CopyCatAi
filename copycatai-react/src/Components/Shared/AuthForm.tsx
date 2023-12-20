@@ -37,7 +37,7 @@ const AuthForm = ({ action, onFormSubmit }: AuthFormProps) => {
       })
       .catch((error) => {
         // Set error message if the API call fails
-        setError(error.response?.data?.message || 'An error occurred.');
+        setError(error.response?.data?.message || 'Sign in failed, try again');
       });
   };
 
