@@ -11,19 +11,20 @@ interface Message {
   content: string | JSX.Element[];
   responseId?: number;
   originalUserRequest?: string;
+  userRating?: 'like' | 'dislike' | null;
+  conversationId: number;
 }
 
 interface ChatWindowProps {
     selectedConversation: Conversation | null
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [conversationId, setConversationId] = useState<number | null>(null);
-
-    const authToken = localStorage.getItem('token');
+const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation }) => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationId, setConversationId] = useState<number | null>(null);
+  const authToken = localStorage.getItem('token');
     
-    const interleaveArrays = (arr1: string[], arr2: string[], responseIds: number[], requestPrompts: string[]): Message[] => {
+    const interleaveArrays = (arr1: string[], arr2: string[], responseIds: number[], requestPrompts: string[], conversationId: number): Message[] => {
         const result: Message[] = [];
         const length = Math.max(arr1.length, arr2.length);
         
@@ -31,12 +32,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
           if (i < arr1.length) {
               const responseContent = requestPrompts[i] || arr1[i];
               const formattedRequest = formatResponse(responseContent);
-                result.push({ role: 'user', content: formattedRequest});
+                result.push({ role: 'user', content: formattedRequest, conversationId});
             }
             if (i < arr2.length) {
               const formattedResponse = formatResponse(arr2[i]);
               const responseId = responseIds[i];
-                result.push({ role: 'assistant', content: formattedResponse, responseId });
+                result.push({ role: 'assistant', content: formattedResponse, responseId, conversationId });
             }
     }
 
@@ -44,7 +45,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
   }
   
   const handleResendRequest = async (request: string) => {
-    const message: Message = { role: 'user', content: request };
+    const message: Message = { role: 'user', content: request, conversationId: conversationId! };
     await handleSendMessage(message);
   }
 
@@ -61,7 +62,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
                 selectedConversation.requests,
                 selectedConversation.responses.map(response => response.response),
                 responseIds,
-                selectedConversation.requestPrompts
+                selectedConversation.requestPrompts,
+                selectedConversation.conversationId
               );
               
               console.log("Loaded Conversation: ", combinedMessages);
@@ -173,64 +175,71 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedConversation}) => {
       return ''; // Default fallback
     };
 
-    const handleSendMessage = async (newMessage: Message, file?: File) => {
+    const handleSendMessage = async (newMessage: Message, file?: File,) => {
       // Convert existing messages content to plain text
+      const currentConversationId = conversationId || -1;
+
       const updatedMessages = messages.map(msg => ({
         role: msg.role,
-        content: convertContentToPlainText(msg.content)
+        content: convertContentToPlainText(msg.content),
+        conversationId: msg.conversationId // Add this line
       }));
-  
+    
       // Convert new message content to plain text and add to messages
       updatedMessages.push({
         role: newMessage.role,
-        content: convertContentToPlainText(newMessage.content)
+        content: convertContentToPlainText(newMessage.content),
+        conversationId: newMessage.conversationId || currentConversationId // Add this line
       });
-  
+    
       setMessages(currentMessages => [...currentMessages, newMessage]);
-  
+    
       // Prepare payload for API
       const payload = {
         conversation: updatedMessages,
         conversationId: conversationId
       };
-  
+    
       // Log payload for debugging
       console.log("Sending payload:", payload);
-  
+    
       let apiResponse;
       let textResponse;
-  
+    
       if (file) {
         apiResponse = await sendPdfMessageToApi(updatedMessages, file);
       } else {
         apiResponse = await sendTextMessageToApi(updatedMessages);
       }
-  
+    
       // Handle the response from the API
       if (apiResponse) {
         textResponse = apiResponse.response || "Error in sending message";
         const responseMessage: Message = {
           role: 'assistant',
-          content: formatResponse(textResponse) // Assuming formatResponse returns a string or JSX.Element[]
+          content: formatResponse(textResponse),
+          conversationId: conversationId || currentConversationId // Add this line
         };
         setMessages(currentMessages => [...currentMessages, responseMessage]);
       } else {
         // Handle error in response
         const errorMessage: Message = {
           role: 'assistant',
-          content: "Error in sending message"
+          content: "Error in sending message",
+          conversationId: conversationId || currentConversationId // Add this line
         };
         setMessages(currentMessages => [...currentMessages, errorMessage]);
       }
     };
 
 
+
     return (
-        <div className="chat-container">
-            <MessageList messages={messages} onResendRequest={handleResendRequest} />
-            <InputBar onSendMessage={handleSendMessage} />
-        </div>
-    );
+    <div className="chat-container">
+      <MessageList messages={messages} onResendRequest={handleResendRequest} />
+      <InputBar onSendMessage={handleSendMessage} conversationId={conversationId} />
+    </div>
+  );
 };
 
 export default ChatWindow;

@@ -213,7 +213,6 @@ namespace CopyCatAiApi.Controllers
         }
 
         [HttpGet("GetConversationDetails")]
-
         public async Task<IActionResult> GetConversationDetails(int conversationId)
         {
             var conversation = await _conversationService.GetConversationById(conversationId);
@@ -232,7 +231,6 @@ namespace CopyCatAiApi.Controllers
                 return NotFound("Data not found.");
             }
 
-
             var conversationDTO = new ConversationDTO()
             {
                 ConversationId = conversation.ConversationId,
@@ -240,7 +238,8 @@ namespace CopyCatAiApi.Controllers
                 Responses = responses.Select(r => new ResponseModel()
                 {
                     Response = r.Response,
-                    ResponseId = r.ResponseId  // Ensure this is included
+                    ResponseId = r.ResponseId,
+                    UserRating = r.UserRating  // Include the user rating for each response
                 }).ToList(),
                 RequestPrompts = requestPrompts,
                 Timestamp = requests.First().TimeStamp
@@ -248,6 +247,7 @@ namespace CopyCatAiApi.Controllers
 
             return Ok(conversationDTO);
         }
+
 
         [HttpPost("RateResponse")]
         public async Task<IActionResult> RateResponse([FromBody] RateResponseModel rateResponse)

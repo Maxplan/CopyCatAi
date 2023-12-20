@@ -6,13 +6,15 @@ import uploadIconAttached from "../../imgs/add-document-attached.svg";
 
 interface InputBarProps {
     onSendMessage: (message: Message, file?: File) => void;
+    conversationId: number | null; // Add this line
 }
 interface Message {
   role: 'user' | 'assistant';
-  content: string | JSX.Element[]; // Ensure this matches the structure you're sending
+    content: string | JSX.Element[]; // Ensure this matches the structure you're sending
+    conversationId: number; // Add this line
 }
 
-const InputBar: React.FC<InputBarProps> = ({ onSendMessage }) => { 
+const InputBar: React.FC<InputBarProps> = ({ onSendMessage, conversationId }) => { 
     const [input, setInput] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -42,7 +44,11 @@ const InputBar: React.FC<InputBarProps> = ({ onSendMessage }) => {
     const handleSend = () => { 
         const trimmedInput = input.trim();
         if (trimmedInput || file) {
-            const message: Message = { role: "user", content: trimmedInput };
+            const message: Message = { 
+            role: "user", 
+            content: trimmedInput,
+            conversationId: conversationId || -1 // Handle the case when conversationId is null
+        };
             onSendMessage(message, file ? file : undefined);
             setInput("");
             setFile(null);
